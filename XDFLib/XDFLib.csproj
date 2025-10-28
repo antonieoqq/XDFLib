@@ -3,17 +3,17 @@
   <PropertyGroup>
     <TargetFrameworks>net9.0;net8.0;net7.0;netstandard2.1</TargetFrameworks>
     <Authors>Dafeng Xie</Authors>
-    <Description>3.12.1
+    <Description>3.12.2
 ReflectionExtensions.GetAllDerivedTypes</Description>
-    <Version>3.12.1</Version>
-    <PackageReleaseNotes>3.12.1
+    <Version>3.12.2</Version>
+    <PackageReleaseNotes>3.12.2
 ReflectionExtensions.GetAllDerivedTypes</PackageReleaseNotes>
     <CopyLocalLockFileAssemblies>true</CopyLocalLockFileAssemblies>
     <PlatformTarget>x64</PlatformTarget>
     <Nullable>enable</Nullable>
     <Title>XDFLib</Title>
     <PackageLicenseExpression>MIT</PackageLicenseExpression>
-    <PackageProjectUrl>https://gitee.com/antonieo/xdflib_dot-net_-csharp-lib</PackageProjectUrl>
+    <PackageProjectUrl>https://github.com/antonieoqq/XDFLib</PackageProjectUrl>
     <GeneratePackageOnBuild>True</GeneratePackageOnBuild>
     <PackageReadmeFile>README.md</PackageReadmeFile>
     <ImplicitUsings>disable</ImplicitUsings>
