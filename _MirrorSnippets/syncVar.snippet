@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="utf-8"?>
+<CodeSnippets xmlns="http://schemas.microsoft.com/VisualStudio/2005/CodeSnippet">
+  <CodeSnippet Format="1.0.0">
+    <Header>
+      <Title>Mirror SyncVar</Title>
+      <Shortcut>mSyncVar</Shortcut>
+      <Author>Antonio Tse</Author>
+      <Description>Mirror SyncVar</Description>
+      <SnippetTypes>
+        <SnippetType>Expansion</SnippetType>
+      </SnippetTypes>
+    </Header>
+    <Snippet>
+      <Declarations>
+        <Literal>
+          <ID>varType</ID>
+          <ToolTip>syncVar类型</ToolTip>
+          <Default>int</Default>
+        </Literal>
+        <Literal>
+          <ID>varName</ID>
+          <ToolTip>syncVar名称</ToolTip>
+          <Default>SyncVarible</Default>
+        </Literal>
+      </Declarations>
+      <Code Language="CSharp"><![CDATA[[SyncVar(hook = nameof(On$varName$Changed))]
+    public $varType$ $varName$;
+    Action<$varType$, $varType$> _on$varName$Changed;
+    private void On$varName$Changed($varType$ oldV, $varType$ newV)
+    {
+        _on$varName$Changed?.Invoke(oldV, newV);
+    }
+]]>
+      </Code>
+    </Snippet>
+  </CodeSnippet>
+</CodeSnippets>

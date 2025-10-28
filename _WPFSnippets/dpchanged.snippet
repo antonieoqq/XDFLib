@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8"?>
+<CodeSnippets xmlns="http://schemas.microsoft.com/VisualStudio/2005/CodeSnippet">
+    <CodeSnippet Format="1.0.0">
+        <Header>
+            <Title>WPF OnDependencyPropertyChanged</Title>
+			<Shortcut>dpchanged</Shortcut>
+			<Author>Antonio Tse</Author>
+			<Description>WPF:依赖属性发生变化时调用的函数片段</Description>
+            <SnippetTypes>
+                <SnippetType>Expansion</SnippetType>
+            </SnippetTypes>
+        </Header>
+        <Snippet>
+            <Declarations>
+              <Literal>
+                <ID>propertyName</ID>
+                <ToolTip>函数名</ToolTip>
+                <Default>Dependency</Default>
+              </Literal>
+              <Literal>
+                <ID>senderType</ID>
+                <ToolTip>你的Control类型</ToolTip>
+                <Default>object</Default>
+              </Literal>
+            </Declarations>
+            <Code Language="CSharp">
+                <![CDATA[static void On$propertyName$PropertyChanged(DependencyObject sender, DependencyPropertyChangedEventArgs e)
+                {
+                  var s = sender as $senderType$;
+                  $selected$ $end$
+                }]]>
+            </Code>
+        </Snippet>
+    </CodeSnippet>
+</CodeSnippets>

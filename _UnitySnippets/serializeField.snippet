@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="utf-8"?>
+<CodeSnippets xmlns="http://schemas.microsoft.com/VisualStudio/2005/CodeSnippet">
+  <CodeSnippet Format="1.0.0">
+    <Header>
+      <Title>Unity SerializeField</Title>
+      <Shortcut>sf</Shortcut>
+      <Author>Antonio Tse</Author>
+      <Description>Unity: 序列化域</Description>
+      <SnippetTypes>
+        <SnippetType>Expansion</SnippetType>
+      </SnippetTypes>
+    </Header>
+    <Snippet>
+      <Declarations>
+        <Literal>
+          <ID>fieldType</ID>
+          <ToolTip>field类型</ToolTip>
+          <Default>int</Default>
+        </Literal>
+          <Literal>
+          <ID>fieldName</ID>
+          <ToolTip>域的名称</ToolTip>
+          <Default>_x</Default>
+        </Literal>
+        <Literal>
+          <ID>propertyName</ID>
+          <ToolTip>属性的名称</ToolTip>
+          <Default>X</Default>
+        </Literal>
+      </Declarations>
+      <Code Language="CSharp">
+        <![CDATA[[SerializeField] $fieldType$ $fieldName$;
+        public $fieldType$ $propertyName$ => $fieldName$;]]>
+      </Code>
+    </Snippet>
+  </CodeSnippet>
+</CodeSnippets>

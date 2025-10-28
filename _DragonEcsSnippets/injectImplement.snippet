@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8"?>
+<CodeSnippets xmlns="http://schemas.microsoft.com/VisualStudio/2005/CodeSnippet">
+  <CodeSnippet Format="1.0.0">
+    <Header>
+      <Title>DragonEcs Inject Implement</Title>
+      <Shortcut>ddi</Shortcut>
+      <Author>Antonio Tse</Author>
+      <Description>DragonEcs: Inject Implement</Description>
+      <SnippetTypes>
+        <SnippetType>Expansion</SnippetType>
+      </SnippetTypes>
+    </Header>
+    <Snippet>
+      <Declarations>
+        <Literal>
+          <ID>injectType</ID>
+          <ToolTip>注入类型</ToolTip>
+          <Default>object</Default>
+        </Literal>
+        <Literal>
+          <ID>fieldName</ID>
+          <ToolTip>inject field name</ToolTip>
+          <Default>_obj</Default>
+        </Literal>
+        <Literal>
+          <ID>propertyName</ID>
+          <ToolTip>拥有此属性的类名称</ToolTip>
+          <Default>OwnerClass</Default>
+        </Literal>
+      </Declarations>
+      <Code Language="CSharp">
+        <![CDATA[private $injectType$ $fieldName$;
+        public void Inject($injectType$ obj) => $fieldName$ = obj;
+        ]]>
+      </Code>
+    </Snippet>
+  </CodeSnippet>
+</CodeSnippets>

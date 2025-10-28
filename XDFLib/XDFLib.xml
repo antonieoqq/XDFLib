@@ -1,0 +1,349 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>XDFLib</name>
+    </assembly>
+    <members>
+        <member name="T:XDFLib.Collections.BiSet`1">
+            <summary>
+            这是一个同时将正向表与反向表整合在一张_bindTable的数据结构，表示存在互相关联的一个成员集合
+            </summary>
+            <typeparam name="T"></typeparam>
+        </member>
+        <member name="T:XDFLib.Collections.BiSet_1v1`1">
+            <summary>
+            这是一个同时将正向表与反向表整合在一张_bindTable的数据结构，表示存在互相关联的一个成员集合
+            </summary>
+            <typeparam name="T"></typeparam>
+        </member>
+        <member name="M:XDFLib.Collections.Deque`1.RemoveToFirst(System.Int32)">
+            <summary>
+            包含fromIndex
+            </summary>
+            <param name="fromIndex"></param>
+        </member>
+        <member name="M:XDFLib.Collections.Deque`1.RemoveToLast(System.Int32)">
+            <summary>
+            包含fromIndex
+            </summary>
+            <param name="fromIndex"></param>
+        </member>
+        <member name="M:XDFLib.Collections.Deque`1.Expand">
+            <summary>
+            默认的膨胀系数为1.5
+            </summary>
+        </member>
+        <member name="P:XDFLib.Collections.LevelQueue.CurrentLevel">
+            <summary>当前等级</summary>
+        </member>
+        <member name="P:XDFLib.Collections.LevelQueue.ScoreOverCurrentLevel">
+            <summary>在当前等级基础上超出的分数</summary>
+        </member>
+        <member name="P:XDFLib.Collections.LevelQueue.TotalScoreOfCurrentLevel">
+            <summary>当前等级的总分门槛</summary>
+        </member>
+        <member name="P:XDFLib.Collections.LevelQueue.ScoreFrom0ToNextLevel">
+            <summary>从第一级到达下一级所需要的总分</summary>
+        </member>
+        <member name="P:XDFLib.Collections.LevelQueue.ScoreFromThisToNextLevel">
+            <summary>从本级到达下一级所需要的分数</summary>
+        </member>
+        <member name="P:XDFLib.Collections.LevelQueue.ScoreRemainToLevelUp">
+            <summary>距离到达下一级所剩的分数</summary>
+        </member>
+        <member name="P:XDFLib.Collections.LevelQueue.ScorePercentFromThisToNextLevel">
+            <summary>当前等级下经验到下一级的百分比</summary>
+        </member>
+        <member name="P:XDFLib.Collections.LevelQueue.TopLevelTotalScore">
+            <summary>到达最高等级总共需要的分数</summary>
+        </member>
+        <member name="P:XDFLib.Collections.LevelQueue.TopLevel">
+            <summary>最高等级</summary>
+        </member>
+        <member name="F:XDFLib.Collections.LevelQueue._levelScores">
+            <summary>每个等级之间相差的分数，列表长度即角色最多可以升级的次数</summary>
+        </member>
+        <member name="F:XDFLib.Collections.LevelQueue._levelTotalScores">
+            <summary>到达各等级分别总共需要的分数</summary>
+        </member>
+        <member name="M:XDFLib.Collections.LevelQueue.GetLevelAchievedBySocre(System.Int32)">
+            <summary>
+            score大于列表中最右（最大）值的情况已被提前处理
+            </summary>
+            <param name="score"></param>
+            <returns></returns>
+        </member>
+        <member name="M:XDFLib.Collections.LevelQueue.BinarySearchLevelTotalScoreIndex(System.Int32,System.Collections.Generic.List{System.Int32},System.Int32,System.Int32)">
+            <summary>
+            v大于列表中最右（最大）值的情况已被提前处理
+            </summary>
+            <param name="v"></param>
+            <param name="l"></param>
+            <param name="leftIndex"></param>
+            <param name="rightIndex"></param>
+            <returns></returns>
+        </member>
+        <member name="T:XDFLib.Collections.WeightPool`1">
+            <summary>
+            权重池，用于处理基于权重的随机
+            </summary>
+            <typeparam name="T"></typeparam>
+        </member>
+        <member name="F:XDFLib.Collections.WeightPool`1._weightDict">
+            <summary>
+            权重图，key是对象，value是权重，决定该对象被随机抽中的概率
+            </summary>
+        </member>
+        <member name="M:XDFLib.Utilities.ReadByteArrayFromFile(System.String)">
+            <summary>
+            注意，不支持超过2G的单个文件
+            </summary>
+            <param name="path"></param>
+            <returns></returns>
+        </member>
+        <member name="M:XDFLib.Utilities.CompressString(System.String)">
+            <summary>
+            Compresses the string.
+            </summary>
+            <param name="text">The text.</param>
+            <returns></returns>
+        </member>
+        <member name="M:XDFLib.Utilities.DecompressString(System.String)">
+            <summary>
+            Decompresses the string.
+            </summary>
+            <param name="compressedText">The compressed text.</param>
+            <returns></returns>
+        </member>
+        <member name="T:XDFLib.ECompMode">
+            <summary> 比较模式 </summary>
+        </member>
+        <member name="F:XDFLib.XMath.MaxGenerationForEachRandom">
+            <summary> 经实测，当一个Random对象在生成了大约8000个随机数后，会失去随机性，可能这和伪随机的算法有关 </summary>
+        </member>
+        <member name="M:XDFLib.XMath.RandomRange(System.Int32,System.Int32)">
+            <summary>
+            不包含max
+            </summary>
+            <param name="min"></param>
+            <param name="max"></param>
+            <returns></returns>
+        </member>
+        <member name="M:XDFLib.XMath.RandomRange(System.Single,System.Single)">
+            <summary>
+            不包含max
+            </summary>
+            <param name="min"></param>
+            <param name="max"></param>
+            <returns></returns>
+        </member>
+        <member name="M:XDFLib.XMath.RandomRange(System.Double,System.Double)">
+            <summary>
+            不包含max
+            </summary>
+            <param name="min"></param>
+            <param name="max"></param>
+            <returns></returns>
+        </member>
+        <member name="M:XDFLib.XMath.Random01">
+            <summary>
+            不包含max
+            </summary>
+            <param name="min"></param>
+            <param name="max"></param>
+            <returns></returns>
+        </member>
+        <member name="M:XDFLib.XMath.LCGRandom(System.Int32)">
+            <summary>
+            基于LCG（linear congruential generator）线性同余算法的随机数实现
+            公式：X(n+1) = (a * X（n） + c) mod m;
+            常量采用的是C++11标准库的版本：其中 mod = 2147483647, a = 48271, c = 0
+            </summary>
+            <param name="seed"></param>
+            <returns>Random in [-2147483648, 2147483647)</returns>
+        </member>
+        <member name="M:XDFLib.XMath.LCGRandom01(System.Int32)">
+            <returns>Random in [0, 1)</returns>
+        </member>
+        <member name="M:XDFLib.XMath.LCGRandom(System.Int32,System.Int32,System.Int32)">
+            <returns>Random in [min, max)</returns>
+        </member>
+        <member name="M:XDFLib.XMath.LCGRandom(System.Int32,System.Single,System.Single)">
+            <returns>Random in [min, max)</returns>
+        </member>
+        <member name="M:XDFLib.XMath.GaussianDistribute(System.Single,System.Single,System.Single,System.Single)">
+            <summary>
+            通过任意数 u1，u2 随机到一个高斯分布中
+            </summary>
+            <param name="u1">[0, 1)</param>
+            <param name="u2">[0, 1)</param>
+        </member>
+        <member name="M:XDFLib.XMath.GaussianRandom(System.Single,System.Single,System.Boolean,System.Int32)">
+            <summary>
+            基于内部的LCG随机数生成器生成高斯分布的随机数
+            </summary>
+            <param name="mean">数学期望</param>
+            <param name="variance">散布半径</param>
+            <param name="forceResultInRange">有大约0.005%~0.007%的概率出现散布在范围外的结果，设置此参数为true可以保证结果在范围内</param>
+            <param name="maxTriesWhenOutOfRange">如果超出范围，会尝试重新随机，为防止意外情况下无限尝试导致死循环，这个参数用于限制尝试次数</param>
+            <returns></returns>
+        </member>
+        <member name="M:XDFLib.XMath.GaussianRandom(System.Int32,System.Single,System.Single,System.Boolean,System.Int32)">
+            <summary>
+            基于传入的Seed，使用内部LCG随机数生成器生成高斯分布的随机数
+            </summary>
+            <param name="seed">种子</param>
+            <param name="mean">数学期望</param>
+            <param name="variance">散布半径</param>
+            <param name="forceResultInRange">有大约0.005%~0.007%的概率出现散布在范围外的结果，设置此参数为true可以保证结果在范围内</param>
+            <param name="maxTriesWhenOutOfRange">如果超出范围，会尝试重新随机，为防止意外情况下无限尝试导致死循环，这个参数用于限制尝试次数</param>
+            <returns></returns>
+        </member>
+        <member name="M:XDFLib.XMath.GaussianRandom(System.Random,System.Single,System.Single,System.Boolean,System.Int32)">
+            <summary>
+            基于传入的随机数生成器生成高斯分布的随机数
+            </summary>
+            <param name="random">Random对象</param>
+            <param name="mean">数学期望</param>
+            <param name="variance">散布半径</param>
+            <param name="forceResultInRange">有大约0.005%~0.007%的概率出现散布在范围外的结果，设置此参数为true可以保证结果在范围内</param>
+            <param name="maxTriesWhenOutOfRange">如果超出范围，会尝试重新随机，为防止意外情况下无限尝试导致死循环，这个参数用于限制尝试次数</param>
+            <returns></returns>
+        </member>
+        <member name="M:XDFLib.XMath.GaussianDeviationRandom(System.Random,System.Single,System.Single)">
+            <summary>
+            此函数采用的近似算法存在一些误差
+            标准函数的结果分布一般在数学期望左右两侧3倍sigma范围内
+            此函数的分布结果则大约为两侧的4倍deviation范围，并且有大约0.005%~0.007%的概率出现4倍deviation范围外的结果
+            所以如果按照mean和variance设定值域，deviation 应该为 variance * 0.25
+            建议直接用GaussianRandom方法
+            </summary>
+        </member>
+        <member name="M:XDFLib.XMath.GaussianDeviationDistribute(System.Single,System.Single,System.Single,System.Single)">
+            <summary>
+            高斯偏离分布，散布范围在mean两侧各4倍deviation的范围内
+            </summary>
+            <param name="u1">[0, 1)</param>
+            <param name="u2">[0, 1)</param>
+        </member>
+        <member name="M:XDFLib.XMath.GaussianDistribute(System.Double,System.Double,System.Double,System.Double)">
+            <summary>
+            通过任意数 u1，u2 随机到一个高斯分布中
+            </summary>
+            <param name="u1">[0, 1)</param>
+            <param name="u2">[0, 1)</param>
+        </member>
+        <member name="M:XDFLib.XMath.GaussianRandom(System.Double,System.Double,System.Boolean,System.Int32)">
+            <summary>
+            基于内部的LCG随机数生成器生成高斯分布的随机数
+            </summary>
+            <param name="mean">数学期望</param>
+            <param name="variance">散布半径</param>
+            <param name="forceResultInRange">有大约0.005%~0.007%的概率出现散布在范围外的结果，设置此参数为true可以保证结果在范围内</param>
+            <param name="maxTriesWhenOutOfRange">如果超出范围，会尝试重新随机，为防止意外情况下无限尝试导致死循环，这个参数用于限制尝试次数</param>
+            <returns></returns>
+        </member>
+        <member name="M:XDFLib.XMath.GaussianDeviationRandom(System.Double,System.Double)">
+            <summary>
+            此函数采用的近似算法存在一些误差
+            标准函数的结果分布一般在数学期望左右两侧3倍sigma范围内
+            此函数的分布结果则大约为两侧的4倍deviation范围，并且有大约0.005%~0.007%的概率出现4倍deviation范围外的结果
+            所以如果按照mean和variance设定值域，deviation 应该为 variance * 0.25
+            建议直接用GaussianRandom方法
+            </summary>
+        </member>
+        <member name="M:XDFLib.XMath.GaussianRandom(System.Random,System.Double,System.Double,System.Boolean,System.Int32)">
+            <summary>
+            基于传入的随机数生成器生成高斯分布的随机数
+            </summary>
+            <param name="random"></param>
+            <param name="mean">数学期望</param>
+            <param name="variance">散布半径</param>
+            <param name="forceResultInRange">有大约0.005%~0.007%的概率出现散布在范围外的结果，设置此参数为true可以保证结果在范围内</param>
+            <param name="maxTriesWhenOutOfRange">如果超出范围，会尝试重新随机，为防止意外情况下无限尝试导致死循环，这个参数用于限制尝试次数</param>
+            <returns></returns>
+        </member>
+        <member name="M:XDFLib.XMath.GaussianDeviationRandom(System.Random,System.Double,System.Double)">
+            <summary>
+            此函数采用的近似算法存在一些误差
+            标准函数的结果分布一般在数学期望左右两侧3倍sigma范围内
+            此函数的分布结果则大约为两侧的4倍deviation范围，并且有大约0.005%~0.007%的概率出现4倍deviation范围外的结果
+            所以如果按照mean和variance设定值域，deviation 应该为 variance * 0.25
+            建议直接用GaussianRandom方法
+            </summary>
+        </member>
+        <member name="M:XDFLib.XMath.GaussianDeviationDistribute(System.Double,System.Double,System.Double,System.Double)">
+            <summary>
+            高斯偏离分布，散布范围在mean两侧各4倍deviation的范围内
+            </summary>
+            <param name="u1">[0, 1)</param>
+            <param name="u2">[0, 1)</param>
+        </member>
+        <member name="M:XDFLib.XMath.TriangleDistribute(System.Single,System.Single,System.Single,System.Single)">
+            <summary>
+            把[0, 1)范围的任意数 x 随机到一个三角分布中
+            </summary>
+            <param name="x">[0, 1)</param>
+        </member>
+        <member name="M:XDFLib.XMath.TriangleDistribute(System.Double,System.Double,System.Double,System.Double)">
+            <summary>
+            把[0, 1)范围的任意数 x 随机到一个三角分布中
+            </summary>
+            <param name="x">[0, 1)</param>
+        </member>
+        <member name="M:XDFLib.XMath.Clamp(System.Int32,System.Int32,System.Int32)">
+            <summary>
+            
+            </summary>
+            <returns>[min, max]</returns>
+        </member>
+        <member name="M:XDFLib.XMath.Clamp(System.Single,System.Single,System.Single)">
+            <summary>
+            
+            </summary>
+            <returns>[min, max]</returns>
+        </member>
+        <member name="M:XDFLib.XMath.Clamp01(System.Single)">
+            <summary>
+            
+            </summary>
+            <returns>[0, 1]</returns>
+        </member>
+        <member name="M:XDFLib.XMath.Clamp01(System.Double)">
+            <summary>
+            
+            </summary>
+            <returns>[0, 1]</returns>
+        </member>
+        <member name="M:XDFLib.XMath.Loop(System.Int32,System.Int32,System.Int32)">
+            <summary>
+            不包含end [ )
+            </summary>
+            <param name="v"></param>
+            <param name="start"></param>
+            <param name="end"></param>
+            <returns></returns>
+        </member>
+        <member name="M:XDFLib.Extensions.StringExtensions.ToInteger(System.String)">
+            <summary>
+            尝试把 string 解析成 int
+            </summary>
+            <param name="str">需要解析的 string</param>
+            <returns>返回 int? 作为结果，如果解析失败的话会返回 null</returns>
+        </member>
+        <member name="M:XDFLib.Extensions.StringExtensions.ToFloat(System.String)">
+            <summary>
+            尝试把 string 解析成 float
+            </summary>
+            <param name="str">需要解析的 string</param>
+            <returns>返回 float? 作为结果，如果解析失败的话会返回 null</returns>
+        </member>
+        <member name="M:XDFLib.Extensions.StringExtensions.ToDouble(System.String)">
+            <summary>
+            尝试把 string 解析成 double
+            </summary>
+            <param name="str">需要解析的 string</param>
+            <returns>返回 double? 作为结果，如果解析失败的话会返回 null</returns>
+        </member>
+    </members>
+</doc>
