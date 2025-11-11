@@ -9,7 +9,7 @@ namespace XDFLib.Extensions
         {
             if (roSpan.Length == 0) { return default; }
 
-            var currIndex = XMath.RandomRange(0, roSpan.Length);
+            var currIndex = XRandom.LCG.Random(0, roSpan.Length);
             return roSpan[currIndex];
         }
 
@@ -19,7 +19,7 @@ namespace XDFLib.Extensions
             while (n > 1)
             {
                 n--;
-                int k = XMath.Rnd.Next(n + 1);
+                int k = XRandom.LCG.Random(n + 1);
                 T value = span[k];
                 span[k] = span[n];
                 span[n] = value;

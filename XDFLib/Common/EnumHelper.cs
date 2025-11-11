@@ -40,7 +40,7 @@ namespace XDFLib
         public static T GetRandomEnum<T>() where T : struct, Enum
         {
             var values = Enum.GetValues(typeof(T));
-            var index = XMath.RandomRange(0, values.Length);
+            var index = XRandom.LCG.Random(0, values.Length);
             var v = (T)values.GetValue(index);
             return v;
         }
@@ -48,7 +48,7 @@ namespace XDFLib
         public static T GetLCGRandomEnum<T>(int seed) where T : struct, Enum
         {
             var values = Enum.GetValues(typeof(T));
-            var index = XMath.LCGRandom(seed, 0, values.Length);
+            var index = XRandom.LCG.Random(ref seed, 0, values.Length);
             var v = (T)values.GetValue(index);
             return v;
         }

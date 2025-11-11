@@ -37,14 +37,7 @@ namespace XDFLib.Collections
         public void AddWeight(T obj, float weight)
         {
             weight = MathF.Max(0.001f, weight);
-            if (_weightDict.TryGetValue(obj, out var w))
-            {
-                _weightDict[obj] = weight;
-            }
-            else
-            {
-                _weightDict.Add(obj, weight);
-            }
+            _weightDict[obj] = weight;
 
             _shouldRebuildRandomChains = true;
         }
@@ -113,7 +106,7 @@ namespace XDFLib.Collections
 
         public T GetRandomElement()
         {
-            var randRate = XMath.RandomRange(0f, 1f);
+            var randRate = XRandom.LCG.Random(0f, 1f);
             return GetRandomElementByRate01(randRate);
         }
 

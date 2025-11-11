@@ -3,11 +3,15 @@
   <PropertyGroup>
     <TargetFrameworks>net9.0;net8.0;net7.0;netstandard2.1</TargetFrameworks>
     <Authors>Dafeng Xie</Authors>
-    <Description>3.12.2
-ReflectionExtensions.GetAllDerivedTypes</Description>
-    <Version>3.12.2</Version>
-    <PackageReleaseNotes>3.12.2
-ReflectionExtensions.GetAllDerivedTypes</PackageReleaseNotes>
+    <Description>4.0.1
+Ease相关算法独立到Ease类中
+所有随机算法从XMath类中独立出去，分门别类到XRandom命名空间下
+重构所有的随机类的接口，更清晰更规范</Description>
+    <Version>4.0.1</Version>
+    <PackageReleaseNotes>4.0.1
+Ease相关算法独立到Ease类中
+所有随机算法从XMath类中独立出去，分门别类到XRandom命名空间下
+重构所有的随机类的接口，更清晰更规范</PackageReleaseNotes>
     <CopyLocalLockFileAssemblies>true</CopyLocalLockFileAssemblies>
     <PlatformTarget>x64</PlatformTarget>
     <Nullable>enable</Nullable>

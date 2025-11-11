@@ -24,7 +24,7 @@ namespace XDFLib.Extensions
             while (n > 1)
             {
                 n--;
-                int k = XMath.Rnd.Next(n + 1);
+                int k = XRandom.LCG.Random(0, n + 1);
                 T value = list[k];
                 list[k] = list[n];
                 list[n] = value;
@@ -35,7 +35,7 @@ namespace XDFLib.Extensions
         {
             if (list.Count > 0)
             {
-                var currIndex = XMath.RandomRange(0, list.Count);
+                var currIndex = XRandom.LCG.Random(0, list.Count);
                 return list[currIndex];
             }
             else
@@ -48,7 +48,7 @@ namespace XDFLib.Extensions
         {
             if (list.Count > 0)
             {
-                var currIndex = XMath.LCGRandom(seed, 0, list.Count);
+                var currIndex = XRandom.LCG.Random(ref seed, 0, list.Count);
                 return list[currIndex];
             }
             else
@@ -62,7 +62,7 @@ namespace XDFLib.Extensions
         {
             if (list.Count > 0)
             {
-                var currIndex = XMath.RandomRange(0, list.Count);
+                var currIndex = XRandom.LCG.Random(0, list.Count);
                 list.RemoveAt(currIndex);
             }
         }

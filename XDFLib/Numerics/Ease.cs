@@ -4,7 +4,7 @@
 
 namespace XDFLib
 {
-    public static partial class XMath
+    public static class Ease
     {
         const double EaseC1 = 1.70158;
         const double EaseC2 = EaseC1 * 1.525;

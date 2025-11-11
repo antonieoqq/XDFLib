@@ -10,7 +10,7 @@ namespace XDFLib.Extensions
             while (n > 1)
             {
                 n--;
-                int k = XMath.Rnd.Next(n + 1);
+                int k = XRandom.LCG.Random(n + 1);
                 T value = values[k];
                 values[k] = values[n];
                 values[n] = value;
@@ -21,7 +21,7 @@ namespace XDFLib.Extensions
         {
             if (values.Length > 0)
             {
-                var currIndex = XMath.RandomRange(0, values.Length);
+                var currIndex = XRandom.LCG.Random(0, values.Length);
                 return values[currIndex];
             }
             else
