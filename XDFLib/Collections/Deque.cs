@@ -408,15 +408,12 @@ namespace XDFLib.Collections
 
         public void Sort(Comparison<T> comparison)
         {
-            if (_indexOffset < 0)
+            if (_indexOffset < 0 || _indexOffset + Count > _array.Length)
             {
                 MoveToNewArray(_array.Length);
             }
-            _array.QuickSort(0, Count - 1, comparison);
-            //var newArray = ToArray();
-            //Array.Sort(newArray, comparison);
-            //_array = newArray;
-            //_indexOffset = 0;
+            var right = _indexOffset + Count - 1;
+            _array.QuickSort(_indexOffset, right, comparison);
         }
 
         public Span<T> AsSpan()

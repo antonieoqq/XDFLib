@@ -6,12 +6,16 @@
     <Description>4.0.1
 Ease相关算法独立到Ease类中
 所有随机算法从XMath类中独立出去，分门别类到XRandom命名空间下
-重构所有的随机类的接口，更清晰更规范</Description>
+重构所有的随机类的接口，更清晰更规范
+4.0.2
+修复 Deque.Sort 在 _indexOffset &gt; 0 时，可能会出现数组越界的问题</Description>
     <Version>4.0.1</Version>
     <PackageReleaseNotes>4.0.1
 Ease相关算法独立到Ease类中
 所有随机算法从XMath类中独立出去，分门别类到XRandom命名空间下
-重构所有的随机类的接口，更清晰更规范</PackageReleaseNotes>
+重构所有的随机类的接口，更清晰更规范
+4.0.2
+修复 Deque.Sort 在 _indexOffset &gt; 0 时，可能会出现数组越界的问题</PackageReleaseNotes>
     <CopyLocalLockFileAssemblies>true</CopyLocalLockFileAssemblies>
     <PlatformTarget>x64</PlatformTarget>
     <Nullable>enable</Nullable>
