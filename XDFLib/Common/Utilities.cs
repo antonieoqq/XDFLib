@@ -12,6 +12,14 @@ namespace XDFLib
             b = temp;
         }
 
+        public static T[,] CreateFilledArray<T>(int rows, int cols, T value)
+        {
+            var array = new T[rows, cols];
+            var span = MemoryMarshal.CreateSpan(ref array[0, 0], rows * cols);
+            span.Fill(value);
+            return array;
+        }
+
         public static void OpenBrowser(string url)
         {
             try
