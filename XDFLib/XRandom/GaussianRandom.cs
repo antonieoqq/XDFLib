@@ -47,8 +47,8 @@ namespace XDFLib.XRandom
         private static float DeviationRandom(float mean, float deviation)
         {
             if (deviation <= 0) { return mean; }
-            float u1 = LCG.Random01();
-            float u2 = LCG.Random01();
+            float u1 = SplitMix32.Random01();
+            float u2 = SplitMix32.Random01();
             return DeviationDistribute(u1, u2, mean, deviation);
         }
 
@@ -80,8 +80,8 @@ namespace XDFLib.XRandom
             {
                 return mean;
             }
-            float u1 = LCG.Random01(ref seed);
-            float u2 = LCG.Random01(ref seed);
+            float u1 = SplitMix32.Random01(ref seed);
+            float u2 = SplitMix32.Random01(ref seed);
             return DeviationDistribute(u1, u2, mean, deviation);
         }
 
@@ -104,8 +104,8 @@ namespace XDFLib.XRandom
             {
                 return mean;
             }
-            float u1 = LCG.Random01(ref seed);
-            float u2 = LCG.Random01(seed);
+            float u1 = SplitMix32.Random01(ref seed);
+            float u2 = SplitMix32.Random01(seed);
             return DeviationDistribute(u1, u2, mean, deviation);
         }
 
@@ -221,8 +221,8 @@ namespace XDFLib.XRandom
             {
                 return mean;
             }
-            double u1 = LCG.Random01_Double(ref seed);
-            double u2 = LCG.Random01_Double(ref seed);
+            double u1 = SplitMix32.Random01_Double(ref seed);
+            double u2 = SplitMix32.Random01_Double(ref seed);
             return DeviationDistribute(u1, u2, mean, deviation);
         }
 
@@ -245,8 +245,8 @@ namespace XDFLib.XRandom
             {
                 return mean;
             }
-            double u1 = LCG.Random01_Double(ref seed);
-            double u2 = LCG.Random01_Double(seed);
+            double u1 = SplitMix32.Random01_Double(ref seed);
+            double u2 = SplitMix32.Random01_Double(seed);
             return DeviationDistribute(u1, u2, mean, deviation);
         }
 
@@ -264,8 +264,8 @@ namespace XDFLib.XRandom
                 return mean;
             }
 
-            double u1 = LCG.Random01();
-            double u2 = LCG.Random01();
+            double u1 = SplitMix32.Random01();
+            double u2 = SplitMix32.Random01();
             return DeviationDistribute(u1, u2, mean, deviation);
         }
 

@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Numerics;
 using System.Threading.Tasks;
+using XDFLib.XRandom;
 
 namespace XDFLib.Numerics
 {
@@ -53,10 +54,10 @@ namespace XDFLib.Numerics
             Vector2[] octaveOffset = new Vector2[octaves];
             for (int i = 0; i < octaves; i++)
             {
-                var randX = XRandom.LCG.Random(ref seed, -0.5f, 0.5f);
+                var randX = SplitMix32.Random(ref seed, -0.5f, 0.5f);
                 float octaveOffsetX = (randX * 100000) + offset.X;
 
-                var randY = XRandom.LCG.Random(ref seed, -0.5f, 0.5f);
+                var randY = SplitMix32.Random(ref seed, -0.5f, 0.5f);
                 float octaveOffsetY = (randY * 100000) + offset.Y;
 
                 octaveOffset[i] = new Vector2(octaveOffsetX, octaveOffsetY);

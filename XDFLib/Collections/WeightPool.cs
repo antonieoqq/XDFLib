@@ -106,7 +106,7 @@ namespace XDFLib.Collections
 
         public T GetRandomElement()
         {
-            var randRate = XRandom.LCG.Random(0f, 1f);
+            var randRate = XRandom.SplitMix32.Random(0f, 1f);
             return GetRandomElementByRate01(randRate);
         }
 

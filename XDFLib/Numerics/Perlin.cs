@@ -50,7 +50,7 @@ namespace XDFLib.Numerics
             // Fisher-Yates洗牌算法
             for (int i = 0; i < 256; i++)
             {
-                int j = XRandom.LCG.Random(ref seed, 1, 256);
+                int j = XRandom.SplitMix32.Random(ref seed, 1, 256);
                 (_permutationTable[i], _permutationTable[j]) =
                     (_permutationTable[j], _permutationTable[i]);
             }

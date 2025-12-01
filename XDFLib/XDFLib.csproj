@@ -4,9 +4,9 @@
     <TargetFrameworks>net9.0;net8.0;net7.0;netstandard2.1</TargetFrameworks>
     <Authors>Dafeng Xie</Authors>
     <Description>Xie Dafeng's personal C# wheels</Description>
-    <Version>4.1.0</Version>
-    <PackageReleaseNotes>4.1.0
-Utilities.CreateFilledArray</PackageReleaseNotes>
+    <Version>4.2.2</Version>
+    <PackageReleaseNotes>4.2.2
+SplitMix32 随机算法，并在其他算法中全面采用，取代LCG版本</PackageReleaseNotes>
     <CopyLocalLockFileAssemblies>true</CopyLocalLockFileAssemblies>
     <PlatformTarget>x64</PlatformTarget>
     <Nullable>enable</Nullable>

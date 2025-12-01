@@ -28,19 +28,19 @@ namespace XDFLib.XRandom
 
         public static float Random(float left, float right, float mean)
         {
-            float x = LCG.Random01();
+            float x = SplitMix32.Random01();
             return Distribute(x, left, right, mean);
         }
 
         public static float Random(int seed, float left, float right, float mean)
         {
-            float x = LCG.Random01(ref seed);
+            float x = SplitMix32.Random01(ref seed);
             return Distribute(x, left, right, mean);
         }
 
         public static float Random(ref int seed, float left, float right, float mean)
         {
-            float x = LCG.Random01(ref seed);
+            float x = SplitMix32.Random01(ref seed);
             return Distribute(x, left, right, mean);
         }
 
@@ -99,19 +99,19 @@ namespace XDFLib.XRandom
 
         public static double Random(double left, double right, double mean)
         {
-            double x = LCG.Random01_Double();
+            double x = SplitMix32.Random01_Double();
             return Distribute(x, left, right, mean);
         }
 
         public static double Random(int seed, double left, double right, double mean)
         {
-            double x = LCG.Random01_Double(ref seed);
+            double x = SplitMix32.Random01_Double(ref seed);
             return Distribute(x, left, right, mean);
         }
 
         public static double Random(ref int seed, double left, double right, double mean)
         {
-            double x = LCG.Random01_Double(ref seed);
+            double x = SplitMix32.Random01_Double(ref seed);
             return Distribute(x, left, right, mean);
         }
 

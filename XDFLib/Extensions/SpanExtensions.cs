@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using XDFLib.XRandom;
 
 namespace XDFLib.Extensions
 {
@@ -9,7 +10,7 @@ namespace XDFLib.Extensions
         {
             if (roSpan.Length == 0) { return default; }
 
-            var currIndex = XRandom.LCG.Random(0, roSpan.Length);
+            var currIndex = SplitMix32.Random(0, roSpan.Length);
             return roSpan[currIndex];
         }
 
@@ -19,7 +20,7 @@ namespace XDFLib.Extensions
             while (n > 1)
             {
                 n--;
-                int k = XRandom.LCG.Random(n + 1);
+                int k = SplitMix32.Random(n + 1);
                 T value = span[k];
                 span[k] = span[n];
                 span[n] = value;

@@ -1,4 +1,5 @@
 ﻿using System;
+using XDFLib.XRandom;
 
 namespace XDFLib.Extensions
 {
@@ -10,7 +11,7 @@ namespace XDFLib.Extensions
             while (n > 1)
             {
                 n--;
-                int k = XRandom.LCG.Random(n + 1);
+                int k = SplitMix32.Random(n + 1);
                 T value = values[k];
                 values[k] = values[n];
                 values[n] = value;
@@ -21,7 +22,7 @@ namespace XDFLib.Extensions
         {
             if (values.Length > 0)
             {
-                var currIndex = XRandom.LCG.Random(0, values.Length);
+                var currIndex = SplitMix32.Random(0, values.Length);
                 return values[currIndex];
             }
             else
