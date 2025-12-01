@@ -14,13 +14,34 @@ namespace XDFLib.Extensions
             return roSpan[currIndex];
         }
 
+        public static T GetRandomElement<T>(this ReadOnlySpan<T> roSpan, ref int seed)
+        {
+            if (roSpan.Length == 0) { return default; }
+
+            var currIndex = SplitMix32.Random(ref seed, 0, roSpan.Length);
+            return roSpan[currIndex];
+        }
+
         public static void Shuffle<T>(this Span<T> span)
         {
             int n = span.Length;
             while (n > 1)
             {
                 n--;
-                int k = SplitMix32.Random(n + 1);
+                int k = SplitMix32.Random(0, n + 1);
+                T value = span[k];
+                span[k] = span[n];
+                span[n] = value;
+            }
+        }
+
+        public static void Shuffle<T>(this Span<T> span, ref int seed)
+        {
+            int n = span.Length;
+            while (n > 1)
+            {
+                n--;
+                int k = SplitMix32.Random(ref seed, 0, n + 1);
                 T value = span[k];
                 span[k] = span[n];
                 span[n] = value;

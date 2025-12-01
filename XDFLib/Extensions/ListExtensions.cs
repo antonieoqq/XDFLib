@@ -94,58 +94,5 @@ namespace XDFLib.Extensions
             }
         }
 
-        //public static T Pop<T>(this List<T> list)
-        //{
-        //    if (list.Count > 0)
-        //    {
-        //        var last = list.Count - 1;
-        //        T v = list[last];
-        //        list.RemoveAt(last);
-        //        return v;
-        //    }
-        //    else
-        //        return default(T);
-        //}
-
-        //public static T GetRandomElement<T>(this List<T> list)
-        //{
-        //    if (list.Count > 0)
-        //    {
-        //        var currIndex = XMath.RandomRange(0, list.Count);
-        //        return list[currIndex];
-        //    }
-        //    else
-        //    {
-        //        return default(T);
-        //    }
-        //}
-
-        //public static void RemoveRandomElement<T>(this List<T> list)
-        //{
-        //    if (list.Count > 0)
-        //    {
-        //        var currIndex = XMath.RandomRange(0, list.Count);
-        //        list.RemoveAt(currIndex);
-        //    }
-        //}
-
-        //public static bool IsIndexValid<T>(this List<T> list, int index)
-        //{
-        //    return index >= 0 && index < list.Count;
-        //}
-
-        //public static T GetByLoopedIndex<T>(this List<T> list, int index)
-        //{
-        //    if (list.Count > 0)
-        //    {
-        //        var loopedIndex = XMath.Loop(index, 0, list.Count);
-        //        return list[loopedIndex];
-        //    }
-        //    else
-        //    {
-        //        throw new ArgumentOutOfRangeException();
-        //    }
-        //}
-
     }
 }

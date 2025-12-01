@@ -32,11 +32,37 @@ namespace XDFLib.Extensions
             }
         }
 
+        public static void Shuffle<T>(this IList<T> list, ref int seed)
+        {
+            int n = list.Count;
+            while (n > 1)
+            {
+                n--;
+                int k = SplitMix32.Random(ref seed, 0, n + 1);
+                T value = list[k];
+                list[k] = list[n];
+                list[n] = value;
+            }
+        }
+
         public static T GetRandomElement<T>(this IList<T> list)
         {
             if (list.Count > 0)
             {
                 var currIndex = SplitMix32.Random(0, list.Count);
+                return list[currIndex];
+            }
+            else
+            {
+                return default;
+            }
+        }
+
+        public static T GetRandomElement<T>(this IList<T> list, ref int seed)
+        {
+            if (list.Count > 0)
+            {
+                var currIndex = SplitMix32.Random(ref seed, 0, list.Count);
                 return list[currIndex];
             }
             else

@@ -46,7 +46,7 @@ namespace XDFLib
             return v;
         }
 
-        public static T GetLCGRandomEnum<T>(int seed) where T : struct, Enum
+        public static T GetRandomEnum<T>(ref int seed) where T : struct, Enum
         {
             var values = Enum.GetValues(typeof(T));
             var index = SplitMix32.Random(ref seed, 0, values.Length);
