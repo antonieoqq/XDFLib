@@ -14,13 +14,16 @@ namespace XDFLib.XRandom
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static int Random(int seed)
         {
-            uint z = (uint)(seed + 0x9E3779B9); // 黄金比例常数（32位版）
-            z ^= z >> 16;
-            z *= 0x85EBCA6B;
-            z ^= z >> 13;
-            z *= 0xC2B2AE35;
-            z ^= z >> 16;
-            return (int)z;
+            unchecked // 显式声明允许溢出，防止编译选项导致运行时异常
+            {
+                uint z = (uint)(seed + 0x9E3779B9); // 黄金比例常数（32位版）
+                z ^= z >> 16;
+                z *= 0x85EBCA6B;
+                z ^= z >> 13;
+                z *= 0xC2B2AE35;
+                z ^= z >> 16;
+                return (int)z;
+            }
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
