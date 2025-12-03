@@ -6,7 +6,7 @@ namespace XDFLib.XRandom
     public class SplitMix32
     {
         // 预计算倒数, 1 / 2^32，用于将 uint 映射到 [0, 1)
-        private const float INV_UINT_MAX = 1f / 4294967296f; 
+        private const float INV_UINT_MAX = 1f / 4294967296f;
         private const double INV_UINT_MAX_D = 1.0 / 4294967296.0;
 
         static int _randomSeed = Guid.NewGuid().GetHashCode();
