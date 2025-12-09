@@ -46,6 +46,13 @@ namespace XDFLib.XRandom
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static float Random01()
+        {
+            _randomSeed = Random(_randomSeed++);
+            return SeedTo01(_randomSeed);
+        }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static float Random01(int seed)
         {
             seed = Random(seed);
@@ -60,10 +67,10 @@ namespace XDFLib.XRandom
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static float Random01()
+        public static double Random01_Double()
         {
             _randomSeed = Random(_randomSeed++);
-            return SeedTo01(_randomSeed);
+            return SeedTo01_Double(_randomSeed);
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
@@ -78,13 +85,6 @@ namespace XDFLib.XRandom
         {
             seed = Random(seed);
             return SeedTo01_Double(seed);
-        }
-
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static double Random01_Double()
-        {
-            _randomSeed = Random(_randomSeed++);
-            return SeedTo01_Double(_randomSeed);
         }
 
         #region Random in range
@@ -168,6 +168,7 @@ namespace XDFLib.XRandom
         }
 
         /// <returns>Random in [min, max)</returns>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static int Random(int min, int max)
         {
             _randomSeed = Random(_randomSeed++);
@@ -175,6 +176,7 @@ namespace XDFLib.XRandom
         }
 
         /// <returns>Random in [min, max)</returns>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static float Random(float min, float max)
         {
             _randomSeed = Random(_randomSeed++);
@@ -182,6 +184,7 @@ namespace XDFLib.XRandom
         }
 
         /// <returns>Random in [min, max)</returns>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static double Random(double min, double max)
         {
             _randomSeed = Random(_randomSeed++);

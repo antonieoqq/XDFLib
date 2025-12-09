@@ -34,5 +34,108 @@ namespace XDFLib.XRandom
             return (long)z;
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static long Random()
+        {
+            _randomSeed = Random(_randomSeed++);
+            return _randomSeed;
+        }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static double SeedTo01(long seed)
+        {
+            return (ulong)seed * INV_UINT_MAX;
+        }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static double Random01()
+        {
+            _randomSeed = Random(_randomSeed++);
+            return SeedTo01(_randomSeed);
+        }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static double Random01(long seed)
+        {
+            seed = Random(seed);
+            return SeedTo01(seed);
+        }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static double Random01(ref long seed)
+        {
+            seed = Random(seed);
+            return SeedTo01(seed);
+        }
+
+        #region Random in range
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static long SeedToRange(long seed, long min, long max)
+        {
+            var len = max - min;
+            var result = min + (long)(len * SeedTo01(seed));
+            return result;
+        }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static double SeedToRange(long seed, double min, double max)
+        {
+            var len = max - min;
+            var result = min + (len * SeedTo01(seed));
+            return result;
+        }
+
+        /// <returns>Random in [min, max)</returns>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static long Random(long min, long max)
+        {
+            _randomSeed = Random(_randomSeed++);
+            return SeedToRange(_randomSeed, min, max);
+        }
+
+        /// <returns>Random in [min, max)</returns>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static double Random(double min, double max)
+        {
+            _randomSeed = Random(_randomSeed++);
+            return SeedToRange(_randomSeed, min, max);
+        }
+
+        /// <returns>Random in [min, max)</returns>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static long Random(long seed, long min, long max)
+        {
+            if (min == max) { return min; }
+            seed = Random(seed);
+            return SeedToRange(seed, min, max);
+        }
+
+        /// <returns>Random in [min, max)</returns>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static long Random(ref long seed, long min, long max)
+        {
+            if (min == max) { return min; }
+            seed = Random(seed);
+            return SeedToRange(seed, min, max);
+        }
+
+        /// <returns>Random in [min, max)</returns>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static double Random(long seed, double min, double max)
+        {
+            if (min == max) { return min; }
+            seed = Random(seed);
+            return SeedToRange(seed, min, max);
+        }
+
+        /// <returns>Random in [min, max)</returns>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static double Random(ref long seed, double min, double max)
+        {
+            if (min == max) { return min; }
+            seed = Random(seed);
+            return SeedToRange(seed, min, max);
+        }
+        #endregion
     }
 }

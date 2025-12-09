@@ -69,7 +69,7 @@ namespace XDFLib.Numerics
             Parallel.For(0, resX * resY, (index) =>
             {
                 var y = index / resX;
-                var x = index % resX;
+                var x = index - (y * resX);
 
                 float currAmplitude = 1;
                 float frequencyFactor = 1;
