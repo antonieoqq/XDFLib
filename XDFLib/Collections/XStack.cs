@@ -99,10 +99,9 @@ namespace XDFLib.Collections
 
         void ExpandIfArrayIsFull()
         {
-            if (_count == _array.Length)
-            {
-                Expand();
-            }
+            if (_count < _array.Length)
+                return;
+            Expand();
         }
 
         void Expand()
@@ -115,10 +114,7 @@ namespace XDFLib.Collections
         {
             var newArray = new T[newLen];
             var countToCopy = Math.Min(newLen, _count);
-            for (int i = 0; i < countToCopy; i++)
-            {
-                newArray[i] = _array[i];
-            }
+            Array.Copy(_array, newArray, countToCopy);
             _array = newArray;
             _count = countToCopy;
         }

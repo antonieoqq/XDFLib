@@ -4,12 +4,10 @@
     <TargetFrameworks>net9.0;net8.0;net7.0;netstandard2.1</TargetFrameworks>
     <Authors>Dafeng Xie</Authors>
     <Description>Xie Dafeng's personal C# wheels</Description>
-    <Version>4.2.5</Version>
-    <PackageReleaseNotes>4.2.5
-SplitMix32 随机算法，并在其他算法中全面采用，取代LCG版本
-List/Span 的扩展包版本增加 ref int seed 版本的方法
-SplitMix64 随机算法
-MapNoise 算法中 var x = index % resX 改为  var x = index - (y * resX)</PackageReleaseNotes>
+    <Version>4.3.0</Version>
+    <PackageReleaseNotes>4.3.0
+优化 Deque/AList/XStack 的一些性能
+Utility 增加通用的 AreEqual 方法</PackageReleaseNotes>
     <CopyLocalLockFileAssemblies>true</CopyLocalLockFileAssemblies>
     <PlatformTarget>x64</PlatformTarget>
     <Nullable>enable</Nullable>

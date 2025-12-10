@@ -1,10 +1,13 @@
-﻿using System.Diagnostics;
+﻿using System.Collections.Generic;
+using System.Diagnostics;
+using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 
 namespace XDFLib
 {
     public static partial class Utilities
     {
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static void Swap<T>(ref T a, ref T b)
         {
             T temp = a;
@@ -12,6 +15,22 @@ namespace XDFLib
             b = temp;
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static bool AreEqual<T>(T a, T b)
+        {
+            return EqualityComparer<T>.Default.Equals(a, b);
+        }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static T[] CreateFilledArray<T>(int length, T value)
+        {
+            var array = new T[length];
+            var span = MemoryMarshal.CreateSpan(ref array[0], length);
+            span.Fill(value);
+            return array;
+        }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static T[,] CreateFilledArray<T>(int rows, int cols, T value)
         {
             var array = new T[rows, cols];

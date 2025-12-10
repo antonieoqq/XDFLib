@@ -105,12 +105,6 @@ namespace XDFLib.Collections
             return ref _array[accessableIndex];
         }
 
-        //public T GetByAutoLoopIndex(int index)
-        //{
-        //    var loopedIndex = GetLoopedIndex(index);
-        //    return this[loopedIndex];
-        //}
-
         public void AddFirst(in T e)
         {
             ExpandIfArrayIsFull();
@@ -226,9 +220,7 @@ namespace XDFLib.Collections
             RemoveToLast(_count - count);
         }
 
-        /// <summary>
-        /// 包含fromIndex
-        /// </summary>
+        /// <summary> 包含fromIndex </summary>
         /// <param name="fromIndex"></param>
         public void RemoveToFirst(int fromIndex)
         {
@@ -250,9 +242,7 @@ namespace XDFLib.Collections
             }
         }
 
-        /// <summary>
-        /// 包含fromIndex
-        /// </summary>
+        /// <summary> 包含fromIndex </summary>
         /// <param name="fromIndex"></param>
         public void RemoveToLast(int fromIndex)
         {
@@ -367,11 +357,7 @@ namespace XDFLib.Collections
 
         public void Clear()
         {
-            for (int i = 0; i < _array.Length; i++)
-            {
-                _array[i] = default;
-            }
-            //_array.Initialize();
+            Array.Clear(_array, 0, _array.Length);
             _indexOffset = 0;
             _count = 0;
         }
@@ -389,11 +375,6 @@ namespace XDFLib.Collections
         public void Resize(int newSize)
         {
             MoveToNewArray(newSize);
-        }
-
-        int GetAccessIndex(int index)
-        {
-            return XMath.Loop(index + _indexOffset, _array.Length);
         }
 
         public T[] ToArray()
@@ -434,51 +415,6 @@ namespace XDFLib.Collections
             return new ReadOnlySpan<T>(_array, _indexOffset, Count);
         }
 
-        void ExpandIfArrayIsFull()
-        {
-            if (_count == _array.Length)
-            {
-                Expand();
-            }
-        }
-
-        /// <summary>
-        /// 默认的膨胀系数为1.5
-        /// </summary>
-        void Expand()
-        {
-            int newLen = (int)(_array.Length * ExpandFactor);
-            MoveToNewArray(newLen);
-        }
-
-        void MoveToNewArray(int newLen)
-        {
-            var newArray = new T[newLen];
-            var countToCopy = Math.Min(newLen, _count);
-            for (int i = 0; i < countToCopy; i++)
-            {
-                newArray[i] = this[i];
-            }
-            _array = newArray;
-            _indexOffset = 0;
-            _count = countToCopy;
-        }
-
-        public Enumerator GetEnumerator()
-        {
-            return new Enumerator(this);
-        }
-
-        IEnumerator IEnumerable.GetEnumerator()
-        {
-            return GetEnumerator();
-        }
-
-        IEnumerator<T> IEnumerable<T>.GetEnumerator()
-        {
-            return GetEnumerator();
-        }
-
         public void Add(T item)
         {
             AddLast(item);
@@ -504,7 +440,7 @@ namespace XDFLib.Collections
             for (int i = 0; i < _count; i++)
             {
                 var e = this[i];
-                if (e != null && e.Equals(item))
+                if (Utilities.AreEqual(e, item))
                 {
                     return true;
                 }
@@ -536,7 +472,7 @@ namespace XDFLib.Collections
             for (int i = 0; i < _count; i++)
             {
                 var e = this[i];
-                if (e != null && e.Equals(item))
+                if (Utilities.AreEqual(e, item))
                 {
                     return i;
                 }
@@ -569,5 +505,54 @@ namespace XDFLib.Collections
                 _count--;
             }
         }
+
+        public Enumerator GetEnumerator()
+        {
+            return new Enumerator(this);
+        }
+
+        IEnumerator IEnumerable.GetEnumerator()
+        {
+            return GetEnumerator();
+        }
+
+        IEnumerator<T> IEnumerable<T>.GetEnumerator()
+        {
+            return GetEnumerator();
+        }
+
+        int GetAccessIndex(int index)
+        {
+            return XMath.Loop(index + _indexOffset, _array.Length);
+        }
+
+        void ExpandIfArrayIsFull()
+        {
+            if (_count == _array.Length)
+            {
+                Expand();
+            }
+        }
+
+        /// <summary> 默认的膨胀系数为1.5 </summary>
+        void Expand()
+        {
+            int newLen = (int)(_array.Length * ExpandFactor);
+            MoveToNewArray(newLen);
+        }
+
+        void MoveToNewArray(int newLen)
+        {
+            var newArray = new T[newLen];
+            var countToCopy = Math.Min(newLen, _count);
+            for (int i = 0; i < countToCopy; i++)
+            {
+                newArray[i] = this[i];
+            }
+            _array = newArray;
+            _indexOffset = 0;
+            _count = countToCopy;
+        }
+
     }
 }

@@ -82,30 +82,12 @@ namespace XDFLib.Collections
 
         public T this[int index]
         {
-            get
-            {
-                if (index < 0 || index >= Count)
-                {
-                    throw new IndexOutOfRangeException();
-                }
-                return _array[index];
-            }
-            set
-            {
-                if (index < 0 || index >= Count)
-                {
-                    throw new IndexOutOfRangeException();
-                }
-                _array[index] = value;
-            }
+            get => _array[index];
+            set => _array[index] = value;
         }
 
         public ref T GetRef(int index)
         {
-            if (index < 0 || index >= Count)
-            {
-                throw new IndexOutOfRangeException();
-            }
             return ref _array[index];
         }
 
@@ -124,30 +106,12 @@ namespace XDFLib.Collections
             return new ReadOnlySpan<T>(_array, 0, Count);
         }
 
-        void Expand()
-        {
-            int newLen = (int)(_array.Length * ExpandFactor);
-            MoveToNewArray(newLen);
-        }
-
-        void MoveToNewArray(int newLen)
-        {
-            var newArray = new T[newLen];
-            var countToCopy = Math.Min(newLen, _count);
-            for (int i = 0; i < countToCopy; i++)
-            {
-                newArray[i] = this[i];
-            }
-            _array = newArray;
-            _count = countToCopy;
-        }
-
         public int IndexOf(T item)
         {
             for (int i = 0; i < _count; i++)
             {
                 var e = this[i];
-                if (e != null && e.Equals(item))
+                if (Utilities.AreEqual(e, item))
                 {
                     return i;
                 }
@@ -218,10 +182,7 @@ namespace XDFLib.Collections
 
         public void Clear()
         {
-            for (int i = 0; i < _count; i++)
-            {
-                _array[i] = default;
-            }
+            Array.Clear(_array, 0, Count);
             _count = 0;
         }
 
@@ -230,7 +191,7 @@ namespace XDFLib.Collections
             for (int i = 0; i < _count; i++)
             {
                 var e = this[i];
-                if (e != null && e.Equals(item))
+                if (Utilities.AreEqual(e, item))
                 {
                     return true;
                 }
@@ -240,10 +201,7 @@ namespace XDFLib.Collections
 
         public void CopyTo(T[] array, int arrayIndex)
         {
-            for (int i = 0; i < _count; i++)
-            {
-                array[arrayIndex++] = this[i];
-            }
+            _array.CopyTo(array, arrayIndex);
         }
 
         public bool Remove(T item)
@@ -271,5 +229,21 @@ namespace XDFLib.Collections
         {
             return GetEnumerator();
         }
+
+        void Expand()
+        {
+            int newLen = (int)(_array.Length * ExpandFactor);
+            MoveToNewArray(newLen);
+        }
+
+        void MoveToNewArray(int newLen)
+        {
+            var newArray = new T[newLen];
+            var countToCopy = Math.Min(newLen, _count);
+            Array.Copy(_array, newArray, countToCopy);
+            _array = newArray;
+            _count = countToCopy;
+        }
+
     }
 }
