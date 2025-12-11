@@ -1,6 +1,6 @@
 ﻿namespace XDFLib
 {
-    public interface IPoolObject
+    public interface IPoolOperations
     {
         void OnGetFromPool();
         void OnRecycleToPool();

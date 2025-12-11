@@ -180,6 +180,45 @@ namespace XDFLib.Collections
             _count++;
         }
 
+        public void AddRange(ICollection<T> items)
+        {
+            var newCount = Count + items.Count;
+            if (newCount > _array.Length)
+            {
+                MoveToNewArray(newCount);
+            }
+
+            foreach (var item in items)
+            {
+                Add(item);
+            }
+        }
+
+        public void AddRange(ReadOnlySpan<T> items)
+        {
+            var newCount = Count + items.Length;
+            if (newCount > _array.Length)
+            {
+                MoveToNewArray(newCount);
+            }
+
+            foreach (var item in items)
+            {
+                Add(item);
+            }
+        }
+
+        public void AddRange(T[] items)
+        {
+            var newCount = Count + items.Length;
+            if (newCount > _array.Length)
+            {
+                MoveToNewArray(newCount);
+            }
+
+            Array.Copy(items, 0, _array, Count, items.Length);
+        }
+
         public void Clear()
         {
             Array.Clear(_array, 0, Count);

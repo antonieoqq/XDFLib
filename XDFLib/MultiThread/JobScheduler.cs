@@ -76,7 +76,7 @@ namespace XDFLib.MultiThread
 
         static void Init()
         {
-            // 留一个核心给游戏的主线程以及渲染线程，防止发顿
+            // 留一个核心给游戏的主线程以及渲染线程，防止卡顿
             var workerCount = (int)MathF.Max(1, Environment.ProcessorCount - 1);
             _workers = new Worker[workerCount];
             for (int i = 0; i < workerCount; i++)
@@ -132,7 +132,7 @@ namespace XDFLib.MultiThread
             _mresSchedule.Set();
         }
 
-        public static void ScheduleJobs<T>(JobPackage<T> jobPack) where T : Job
+        public static void ScheduleJobs(JobPackage jobPack)
         {
             var jobs = jobPack.GetJobs();
             ScheduleJobs(jobs);
@@ -164,26 +164,26 @@ namespace XDFLib.MultiThread
             _ssJobList.Release();
         }
 
-        public static void Stop()
-        {
-            _ssPreJobList.Wait();
-            _ssJobList.Wait();
+        //public static void Stop()
+        //{
+        //    _ssPreJobList.Wait();
+        //    _ssJobList.Wait();
 
-            _ssPreJobList.Dispose();
-            _ssJobList.Dispose();
+        //    _ssPreJobList.Dispose();
+        //    _ssJobList.Dispose();
 
-            _preJobList.Clear();
-            _jobList.Clear();
+        //    _preJobList.Clear();
+        //    _jobList.Clear();
 
-            _scheduleThread.Abort();
+        //    _scheduleThread.Abort();
 
-            for (int i = 0; i < _workers.Length; i++)
-            {
-                var w = _workers[i];
-                w.Destory();
-                _workers[i] = null;
-            }
-        }
+        //    for (int i = 0; i < _workers.Length; i++)
+        //    {
+        //        var w = _workers[i];
+        //        w.Destory();
+        //        _workers[i] = null;
+        //    }
+        //}
 
         static void ScheduleProc()
         {

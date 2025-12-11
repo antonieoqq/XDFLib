@@ -5,102 +5,66 @@ using XDFLib.Collections;
 
 namespace XDFLib.MultiThread
 {
-    public abstract class JobPackage
+    public class JobPackage : IPoolOperations
     {
-        //public static event Action<JobPackage> OnAllJobFinished = null;
-
         public string Name { get; set; } = string.Empty;
+        public int JobCount => _allJobs.Count;
 
-        public abstract int JobCount { get; }
-        public bool AutoRecycleOnAllFinish { get; set; } = false;
+        public event Action<JobPackage> OnAllJobsFinished = null;
 
-        public int FinishedCount { get; protected set; }
+        AList<Job> _allJobs = new AList<Job>();
+        HashSet<Job> _unfinishedJobs = new HashSet<Job>();
         SemaphoreSlim _ssm = new SemaphoreSlim(1, 1);
-
-        public Action<JobPackage> _onAllJobFinished { get; protected set; }
-
-        public abstract void Clear();
-
-        public void OnJobFinished(Job job)
-        {
-            _ssm.Wait();
-            FinishedCount++;
-            if (FinishedCount == JobCount)
-            {
-                _onAllJobFinished?.Invoke(this);
-                if (AutoRecycleOnAllFinish)
-                {
-                    Clear();
-                    ObjectRepository.RecycleObject(this);
-                }
-            }
-            _ssm.Release();
-        }
-    }
-
-    public class JobPackage<T> : JobPackage where T : Job
-    {
-        public override int JobCount => _allJobs.Count;
-        public int JobCapacity { get => _allJobs.Capacity; set => _allJobs.Capacity = value; }
-
-        XStack<T> _allJobs = new XStack<T>();
 
         public JobPackage()
         {
         }
 
-        public JobPackage(ICollection<T> jobs, string name = "", Action<JobPackage> onAllJobsFinished = null)
+        public JobPackage(ICollection<Job> jobs, string name = "", Action<JobPackage> onAllJobsFinished = null)
         {
             Name = name;
             SetJobs(jobs);
-            _onAllJobFinished = onAllJobsFinished;
+            OnAllJobsFinished = onAllJobsFinished;
         }
 
-        public void SetJobs(ICollection<T> jobs)
+        public void SetJobs(ICollection<Job> jobs)
         {
-            _allJobs.Clear();
-            FinishedCount = 0;
+            ClearAllJobs();
 
-            _allJobs.Push(jobs);
+            _allJobs.Capacity = jobs.Count;
+            _allJobs.AddRange(jobs);
+            _unfinishedJobs.UnionWith(jobs);
             foreach (var j in jobs)
             {
-                j.ParentPackage = this;
+                j.AddOnFinishListoner(OnJobFinished);
             }
         }
 
-        public override void Clear()
+        public void AddJob(Job job)
         {
-            _allJobs.Clear();
-            FinishedCount = 0;
+            _allJobs.Add(job);
+            _unfinishedJobs.Add(job);
+            job.AddOnFinishListoner(OnJobFinished);
         }
 
-        public void AddJob(T job)
+        public void AddJobs(ICollection<Job> jobs)
         {
-            _allJobs.Push(job);
-            job.ParentPackage = this;
-        }
-
-        public void AddJobs(ICollection<T> jobs)
-        {
-            _allJobs.Push(jobs);
+            _allJobs.AddRange(jobs);
+            _unfinishedJobs.UnionWith(jobs);
             foreach (var j in jobs)
             {
-                j.ParentPackage = this;
+                j.AddOnFinishListoner(OnJobFinished);
             }
         }
 
-        public void AddJobs(ReadOnlySpan<T> jobs)
+        public void AddJobs(ReadOnlySpan<Job> jobs)
         {
-            _allJobs.Push(jobs);
+            _allJobs.AddRange(jobs);
             foreach (var j in jobs)
             {
-                j.ParentPackage = this;
+                _unfinishedJobs.Add(j);
+                j.AddOnFinishListoner(OnJobFinished);
             }
-        }
-
-        public void SetOnAllJobFinishedListoner(Action<JobPackage> onAllJobsFinished)
-        {
-            _onAllJobFinished = onAllJobsFinished;
         }
 
         public void Schedule()
@@ -108,9 +72,42 @@ namespace XDFLib.MultiThread
             JobScheduler.ScheduleJobs(GetJobs());
         }
 
-        public ReadOnlySpan<T> GetJobs()
+        public ReadOnlySpan<Job> GetJobs()
         {
             return _allJobs.AsSpan();
+        }
+
+        public virtual void OnGetFromPool()
+        {
+        }
+
+        public virtual void OnRecycleToPool()
+        {
+            ClearAllJobs();
+            OnAllJobsFinished = null;
+        }
+
+        public void ClearAllJobs()
+        {
+            foreach (var job in _allJobs)
+            {
+                job.RemoveOnFinishListoner(OnJobFinished);
+            }
+            _allJobs.Clear();
+            _unfinishedJobs.Clear();
+        }
+
+        private void OnJobFinished(Job job)
+        {
+            job.RemoveOnFinishListoner(OnJobFinished);
+
+            _ssm.Wait();
+            _unfinishedJobs.Remove(job);
+            _ssm.Release();
+
+            if (_unfinishedJobs.Count > 0) return;
+
+            OnAllJobsFinished?.Invoke(this);
         }
     }
 }
