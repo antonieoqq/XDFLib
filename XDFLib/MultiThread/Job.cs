@@ -4,28 +4,12 @@ namespace XDFLib.MultiThread
 {
     public abstract class Job : IPoolOperations
     {
-        Action<Job> _onFinished = null;
+        public JobPackage? ParentPackage { get; internal set; } = null;
 
         public void Execute()
         {
             DoExecte();
-            _onFinished?.Invoke(this);
-        }
-
-        public void Schedule()
-        {
-            JobScheduler.ScheduleJob(this);
-        }
-
-        public void AddOnFinishListoner(Action<Job> listoner)
-        {
-            _onFinished -= listoner;
-            _onFinished += listoner;
-        }
-
-        public void RemoveOnFinishListoner(Action<Job> listoner)
-        {
-            _onFinished -= listoner;
+            ParentPackage?.OnJobFinished(this);
         }
 
         public virtual void OnGetFromPool()
@@ -35,7 +19,7 @@ namespace XDFLib.MultiThread
 
         public virtual void OnRecycleToPool()
         {
-            _onFinished = null;
+            ParentPackage = null;
         }
 
         protected abstract void DoExecte();

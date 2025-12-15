@@ -36,7 +36,7 @@ namespace XDFLib.MultiThread
             _unfinishedJobs.UnionWith(jobs);
             foreach (var j in jobs)
             {
-                j.AddOnFinishListoner(OnJobFinished);
+                j.ParentPackage = this;
             }
         }
 
@@ -44,7 +44,7 @@ namespace XDFLib.MultiThread
         {
             _allJobs.Add(job);
             _unfinishedJobs.Add(job);
-            job.AddOnFinishListoner(OnJobFinished);
+            job.ParentPackage = this;
         }
 
         public void AddJobs(ICollection<Job> jobs)
@@ -53,7 +53,7 @@ namespace XDFLib.MultiThread
             _unfinishedJobs.UnionWith(jobs);
             foreach (var j in jobs)
             {
-                j.AddOnFinishListoner(OnJobFinished);
+                j.ParentPackage = this;
             }
         }
 
@@ -63,7 +63,7 @@ namespace XDFLib.MultiThread
             foreach (var j in jobs)
             {
                 _unfinishedJobs.Add(j);
-                j.AddOnFinishListoner(OnJobFinished);
+                j.ParentPackage = this;
             }
         }
 
@@ -91,15 +91,15 @@ namespace XDFLib.MultiThread
         {
             foreach (var job in _allJobs)
             {
-                job.RemoveOnFinishListoner(OnJobFinished);
+                job.ParentPackage = null;
             }
             _allJobs.Clear();
             _unfinishedJobs.Clear();
         }
 
-        private void OnJobFinished(Job job)
+        internal void OnJobFinished(Job job)
         {
-            job.RemoveOnFinishListoner(OnJobFinished);
+            job.ParentPackage = null;
 
             _ssm.Wait();
             _unfinishedJobs.Remove(job);
