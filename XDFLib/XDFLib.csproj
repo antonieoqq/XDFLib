@@ -9,7 +9,8 @@
 开发 重构 ObjectPool 和 ObjectRepository，以统一 ObjectPool&lt;T&gt; 和 ObjectRepository 的对象集
 开发 现在 ObjectPool 增加对 IPoolOperation 对象的自动处理
 开发 重构 Job/JobPackage，让它们更加简单直接
-开发 MapNoise 中通过 ArrayPool 优化 octaveOffset 数组的临时分配处理</PackageReleaseNotes>
+开发 MapNoise 中通过 ArrayPool 优化 octaveOffset 数组的临时分配处理
+开发 Deque.Add(ICollection&lt;T&gt; col) 的方法改名 AddRange，以减轻混淆</PackageReleaseNotes>
     <CopyLocalLockFileAssemblies>true</CopyLocalLockFileAssemblies>
     <PlatformTarget>x64</PlatformTarget>
     <Nullable>enable</Nullable>

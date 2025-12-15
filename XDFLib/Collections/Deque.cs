@@ -420,7 +420,7 @@ namespace XDFLib.Collections
             AddLast(item);
         }
 
-        public void Add(ICollection<T> items)
+        public void AddRange(ICollection<T> items)
         {
             var newCount = _count + items.Count;
             if (newCount > _array.Length)
