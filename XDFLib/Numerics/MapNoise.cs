@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Buffers;
 using System.Numerics;
 using System.Threading.Tasks;
 using XDFLib.XRandom;
@@ -51,48 +52,56 @@ namespace XDFLib.Numerics
             float maxPossibleHeight = 0;
             float amplitude = 1;
 
-            Vector2[] octaveOffset = new Vector2[octaves];
-            for (int i = 0; i < octaves; i++)
+            var octaveOffset = ArrayPool<Vector2>.Shared.Rent(octaves);
+
+            try
             {
-                var randX = SplitMix32.Random(ref seed, -0.5f, 0.5f);
-                float octaveOffsetX = (randX * 100000) + offset.X;
-
-                var randY = SplitMix32.Random(ref seed, -0.5f, 0.5f);
-                float octaveOffsetY = (randY * 100000) + offset.Y;
-
-                octaveOffset[i] = new Vector2(octaveOffsetX, octaveOffsetY);
-                offset *= lacunarity;
-                maxPossibleHeight += amplitude;
-                amplitude *= persistance;
-            }
-
-            float normalizeFactor = 1f / (maxPossibleHeight * XMath.Sqrt2);
-            Parallel.For(0, resX * resY, (index) =>
-            {
-                var y = index / resX;
-                var x = index - (y * resX);
-
-                float currAmplitude = 1;
-                float frequencyFactor = 1;
-                float height = 0;
-
                 for (int i = 0; i < octaves; i++)
                 {
-                    float rateX = (x - centerX) / (resX - 1);
-                    float sampleX = rateX * freq.X * frequencyFactor - octaveOffset[i].X;
-                    float rateY = (y - centerY) / (resY - 1);
-                    float sampleY = rateY * freq.Y * frequencyFactor + octaveOffset[i].Y;
+                    var randX = SplitMix32.Random(ref seed, -0.5f, 0.5f);
+                    float octaveOffsetX = (randX * 100000) + offset.X;
 
-                    float perlinValue = perlin.Noise(sampleX, sampleY, time) * 2 - 1;
+                    var randY = SplitMix32.Random(ref seed, -0.5f, 0.5f);
+                    float octaveOffsetY = (randY * 100000) + offset.Y;
 
-                    height += perlinValue * currAmplitude;
-
-                    currAmplitude *= persistance;
-                    frequencyFactor *= lacunarity;
+                    octaveOffset[i] = new Vector2(octaveOffsetX, octaveOffsetY);
+                    offset *= lacunarity;
+                    maxPossibleHeight += amplitude;
+                    amplitude *= persistance;
                 }
 
-                result[x, y] = (height + 1) * normalizeFactor;
-            });
+                float normalizeFactor = 1f / (maxPossibleHeight * XMath.Sqrt2);
+                Parallel.For(0, resX * resY, (index) =>
+                {
+                    var y = index / resX;
+                    var x = index - (y * resX);
+
+                    float currAmplitude = 1;
+                    float frequencyFactor = 1;
+                    float height = 0;
+
+                    for (int i = 0; i < octaves; i++)
+                    {
+                        float rateX = (x - centerX) / (resX - 1);
+                        float sampleX = rateX * freq.X * frequencyFactor - octaveOffset[i].X;
+                        float rateY = (y - centerY) / (resY - 1);
+                        float sampleY = rateY * freq.Y * frequencyFactor + octaveOffset[i].Y;
+
+                        float perlinValue = perlin.Noise(sampleX, sampleY, time) * 2 - 1;
+
+                        height += perlinValue * currAmplitude;
+
+                        currAmplitude *= persistance;
+                        frequencyFactor *= lacunarity;
+                    }
+
+                    result[x, y] = (height + 1) * normalizeFactor;
+                });
+            }
+            finally
+            {
+                ArrayPool<Vector2>.Shared.Return(octaveOffset);
+            }
         }
 
     }
