@@ -4,8 +4,8 @@
     <TargetFrameworks>net9.0;net8.0;net7.0;netstandard2.1</TargetFrameworks>
     <Authors>Dafeng Xie</Authors>
     <Description>Xie Dafeng's personal C# wheels</Description>
-    <Version>4.4.2</Version>
-    <PackageReleaseNotes>4.4.2
+    <Version>4.4.3</Version>
+    <PackageReleaseNotes>4.4.3
 开发 重构 ObjectPool 和 ObjectRepository，以统一 ObjectPool&lt;T&gt; 和 ObjectRepository 的对象集
 开发 现在 ObjectPool 增加对 IPoolOperation 对象的自动处理
 开发 重构 Job/JobPackage，让它们更加简单直接</PackageReleaseNotes>

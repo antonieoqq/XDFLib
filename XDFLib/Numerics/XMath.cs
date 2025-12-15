@@ -3,8 +3,10 @@
 namespace XDFLib
 {
 
-    public static partial class XMath
+    public static class XMath
     {
+        public const float Sqrt2 = 1.41421356237f;
+
         public static float Lerp(float from, float to, float t)
         {
             if (from == to) return from;

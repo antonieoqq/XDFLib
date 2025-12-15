@@ -66,6 +66,7 @@ namespace XDFLib.Numerics
                 amplitude *= persistance;
             }
 
+            float normalizeFactor = 1f / (maxPossibleHeight * XMath.Sqrt2);
             Parallel.For(0, resX * resY, (index) =>
             {
                 var y = index / resX;
@@ -90,7 +91,7 @@ namespace XDFLib.Numerics
                     frequencyFactor *= lacunarity;
                 }
 
-                result[x, y] = (height + 1) / (maxPossibleHeight * 1.4f);
+                result[x, y] = (height + 1) * normalizeFactor;
             });
         }
 
