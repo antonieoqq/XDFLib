@@ -8,6 +8,12 @@ namespace XDFLib
         public static int IndexOfMinGreaterThan<T>(ReadOnlySpan<T> array, T value, bool ascending = true)
             where T : IComparable<T>
         {
+            var firstCompare = array[0].CompareTo(value);
+            if (ascending ? firstCompare > 0 : firstCompare < 0) return 0;
+
+            var lastCompare = array[array.Length - 1].CompareTo(value);
+            if (ascending ? lastCompare < 0 : lastCompare > 0) return array.Length - 1;
+
             int low = 0;
             int high = array.Length - 1;
             int resultIndex = -1;
@@ -34,6 +40,12 @@ namespace XDFLib
         public static int IndexOfMinGreaterThan<T>(IList<T> array, T value, bool ascending = true)
             where T : IComparable<T>
         {
+            var firstCompare = array[0].CompareTo(value);
+            if (ascending ? firstCompare > 0 : firstCompare < 0) return 0;
+
+            var lastCompare = array[array.Count - 1].CompareTo(value);
+            if (ascending ? lastCompare < 0 : lastCompare > 0) return array.Count - 1;
+
             int low = 0;
             int high = array.Count - 1;
             int resultIndex = -1;
@@ -60,6 +72,12 @@ namespace XDFLib
         public static int IndexOfMaxLessThan<T>(ReadOnlySpan<T> array, T value, bool ascending = true)
             where T : IComparable<T>
         {
+            var firstCompare = array[0].CompareTo(value);
+            if (ascending ? firstCompare > 0 : firstCompare < 0) return 0;
+
+            var lastCompare = array[array.Length - 1].CompareTo(value);
+            if (ascending ? lastCompare < 0 : lastCompare > 0) return array.Length - 1;
+
             int low = 0;
             int high = array.Length - 1;
             int resultIndex = -1;
@@ -89,6 +107,12 @@ namespace XDFLib
         public static int IndexOfMaxLessThan<T>(IList<T> array, T value, bool ascending = true)
             where T : IComparable<T>
         {
+            var firstCompare = array[0].CompareTo(value);
+            if (ascending ? firstCompare > 0 : firstCompare < 0) return 0;
+
+            var lastCompare = array[array.Count - 1].CompareTo(value);
+            if (ascending ? lastCompare < 0 : lastCompare > 0) return array.Count - 1;
+
             int low = 0;
             int high = array.Count - 1;
             int resultIndex = -1;
@@ -114,7 +138,6 @@ namespace XDFLib
 
             return resultIndex;
         }
-
 
         public static int IndexOfClosest(ReadOnlySpan<int> array, int x)
         {

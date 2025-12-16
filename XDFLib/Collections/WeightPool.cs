@@ -10,20 +10,25 @@ namespace XDFLib.Collections
     public class WeightPool<T>
     {
         public const float MinWeight = 0.001f;
-        public struct Entry
+
+        public struct Entry : IComparable<Entry>
         {
-            // 在权重链中的起始和结束标记
-            public float StartMark;
-            public float EndMark;
+            // 在权重链中的累计权重 CumulativeWeight
+            public float CumulativeWeight;
             // 对应的对象
             public T Obj;
+
+            public int CompareTo(Entry other)
+            {
+                return CumulativeWeight.CompareTo(other.CumulativeWeight);
+            }
         }
 
         // 权重链表，基于 _weightDict 生成，每个对象对应一个区间，区间长度与权重成正比，用于随机抽取
         AList<Entry> _weightChain;
         public ReadOnlySpan<Entry> WeightChain => _weightChain.AsReadOnlySpan();
 
-        public float TopWeightMark => _topWeight;
+        public float TopWeight => _topWeight;
         public int Count => _weightDict.Count;
 
         /// <summary> 权重图，key是对象，value是权重，决定该对象被随机抽中的概率 </summary>
@@ -134,50 +139,21 @@ namespace XDFLib.Collections
             else
             {
                 var randW = randRate * _topWeight;
-                var randIndex = BinarySearch(randW);
+                var searchEntry = new Entry() { CumulativeWeight = randW, Obj = default(T) };
+                var randIndex = BinarySearch.IndexOfMinGreaterThan(_weightChain.AsReadOnlySpan(), searchEntry);
                 return _weightChain[randIndex].Obj;
             }
         }
 
         void CreateAndAddNewWeightItem(T obj, float weight, ref float topWeightMark)
         {
-            var startMark = topWeightMark;
             topWeightMark += weight;
             Entry item = new Entry()
             {
-                StartMark = startMark,
-                EndMark = topWeightMark,
+                CumulativeWeight = topWeightMark,
                 Obj = obj
             };
             _weightChain.Add(item);
-        }
-
-        int BinarySearch(float weight)
-        {
-            var chain = WeightChain;
-            if (weight > _topWeight)
-            {
-                return chain.Length - 1;
-            }
-            int l = 0;
-            int r = chain.Length - 1;
-            int mid = 0;
-            while (l <= r)
-            {
-                mid = (l + r) / 2;
-                ref readonly var midW = ref chain[mid];
-                if (weight < midW.StartMark)
-                {
-                    r = mid - 1;
-                }
-                else if (weight > midW.EndMark)
-                {
-                    l = mid + 1;
-                }
-                else
-                    return mid;
-            }
-            return mid;
         }
     }
 }
