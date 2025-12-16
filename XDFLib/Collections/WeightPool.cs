@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Numerics;
 
 namespace XDFLib.Collections
 {
@@ -10,56 +9,81 @@ namespace XDFLib.Collections
     /// <typeparam name="T"></typeparam>
     public class WeightPool<T>
     {
-        /// <summary>
-        /// 权重图，key是对象，value是权重，决定该对象被随机抽中的概率
-        /// </summary>
-        Dictionary<T, float> _weightDict = new Dictionary<T, float>();
+        public const float MinWeight = 0.001f;
+        public struct Entry
+        {
+            // 在权重链中的起始和结束标记
+            public float StartMark;
+            public float EndMark;
+            // 对应的对象
+            public T Obj;
+        }
 
-        // 随机表，基于权重图生成了2个List，_weightChain是基于权重连起来的概率分布区间表，每个区间对应_objChain表中的一个对象
-        // 这2个List用于随机抽取过程时的查询，在权重图发生改变后，使用时要Rebuild
-        List<Vector2> _weightChain = new List<Vector2>();
-        List<T> _objChain = new List<T>();
-        public float TopWeightMark => TopWeightMark;
+        // 权重链表，基于 _weightDict 生成，每个对象对应一个区间，区间长度与权重成正比，用于随机抽取
+        AList<Entry> _weightChain;
+        public ReadOnlySpan<Entry> WeightChain => _weightChain.AsReadOnlySpan();
+
+        public float TopWeightMark => _topWeightMark;
         public int Count => _weightDict.Count;
 
-        bool _shouldRebuildRandomChains = false;
+        /// <summary> 权重图，key是对象，value是权重，决定该对象被随机抽中的概率 </summary>
+        Dictionary<T, float> _weightDict;
+
+        bool _needRebuildChain = false;
         float _topWeightMark = 0;
+
+        public WeightPool()
+        {
+            _weightDict = new Dictionary<T, float>();
+            _weightChain = new AList<Entry>();
+        }
+
+        public WeightPool(int capacity)
+        {
+            _weightDict = new Dictionary<T, float>(capacity);
+            _weightChain = new AList<Entry>(capacity);
+        }
 
         public void Clear()
         {
             _weightDict.Clear();
             _weightChain.Clear();
-            _objChain.Clear();
-            _shouldRebuildRandomChains = false;
+            _needRebuildChain = false;
             _topWeightMark = 0;
         }
 
-        public void AddWeight(T obj, float weight)
+        public bool AddWeight(T obj, float weight)
         {
-            weight = MathF.Max(0.001f, weight);
-            _weightDict[obj] = weight;
+            if (obj == null) return false;
 
-            _shouldRebuildRandomChains = true;
+            weight = MathF.Max(MinWeight, weight);
+            var added = _weightDict.TryAdd(obj, weight);
+            if (!added) { return false; }
+
+            CreateAndAddNewWeightItem(obj, weight, ref _topWeightMark);
+            return true;
         }
 
         public void RemoveWeight(T obj)
         {
+            if (obj == null) return;
+
             _weightDict.Remove(obj);
-            _shouldRebuildRandomChains = true;
+            _needRebuildChain = true;
         }
 
         public void SetWeight(T obj, float weight)
         {
-            float w = 0;
-            if (_weightDict.TryGetValue(obj, out w))
-            {
-                _weightDict[obj] = weight;
-                _shouldRebuildRandomChains = true;
-            }
+            if (obj == null) return;
+
+            _weightDict[obj] = weight;
+            _needRebuildChain = true;
         }
 
         public float GetWeight(T obj)
         {
+            if (obj == null) return 0;
+
             if (_weightDict.TryGetValue(obj, out var w))
                 return w;
             else
@@ -68,7 +92,7 @@ namespace XDFLib.Collections
 
         public float GetWeightPercent(T obj)
         {
-            if (TopWeightMark <= 0) { return 0; }
+            if (obj == null || _topWeightMark <= 0) { return 0; }
 
             if (_weightDict.TryGetValue(obj, out var w))
                 return w / _topWeightMark;
@@ -76,32 +100,21 @@ namespace XDFLib.Collections
                 return 0;
         }
 
-        public void ForEachWeight(Action<T, float> act)
-        {
-            foreach (var w in _weightDict)
-            {
-                act(w.Key, w.Value);
-            }
-        }
-
-        public void RebuildRandomChains()
+        public void RebuildWeightChain()
         {
             _weightChain.Clear();
-            _objChain.Clear();
+            _topWeightMark = 0;
 
             var iter = _weightDict.GetEnumerator();
-            _topWeightMark = 0;
             while (iter.MoveNext())
             {
-                if (iter.Current.Value > 0)
-                {
-                    var prevTop = _topWeightMark;
-                    _topWeightMark += iter.Current.Value;
-                    _weightChain.Add(new Vector2(prevTop, _topWeightMark));
-                    _objChain.Add(iter.Current.Key);
-                }
+                var weight = iter.Current.Value;
+                if (weight <= 0)
+                    continue;
+
+                CreateAndAddNewWeightItem(iter.Current.Key, weight, ref _topWeightMark);
             }
-            _shouldRebuildRandomChains = false;
+            _needRebuildChain = false;
         }
 
         public T GetRandomElement()
@@ -112,38 +125,52 @@ namespace XDFLib.Collections
 
         public T GetRandomElementByRate01(float randRate)
         {
-            if (_shouldRebuildRandomChains)
+            if (_needRebuildChain)
             {
-                RebuildRandomChains();
+                RebuildWeightChain();
             }
-            if (_objChain.Count == 0) { return default(T); }
-            else if (_objChain.Count == 1) { return _objChain[0]; }
+            if (_weightChain.Count == 0) { return default(T); }
+            else if (_weightChain.Count == 1) { return _weightChain[0].Obj; }
             else
             {
                 var randW = randRate * _topWeightMark;
                 var randIndex = BinarySearch(randW);
-                return _objChain[randIndex];
+                return _weightChain[randIndex].Obj;
             }
+        }
+
+        void CreateAndAddNewWeightItem(T obj, float weight, ref float topWeightMark)
+        {
+            var startMark = topWeightMark;
+            topWeightMark += weight;
+            Entry item = new Entry()
+            {
+                StartMark = startMark,
+                EndMark = topWeightMark,
+                Obj = obj
+            };
+            _weightChain.Add(item);
         }
 
         int BinarySearch(float weight)
         {
+            var chain = WeightChain;
             if (weight > _topWeightMark)
             {
-                return _weightChain.Count - 1;
+                return chain.Length - 1;
             }
             int l = 0;
-            int r = _weightChain.Count - 1;
+            int r = chain.Length - 1;
             int mid = 0;
             while (l <= r)
             {
                 mid = (l + r) / 2;
-                var midW = _weightChain[mid];
-                if (weight < midW.X)
+                ref readonly var midW = ref chain[mid];
+                if (weight < midW.StartMark)
                 {
                     r = mid - 1;
                 }
-                else if (weight > midW.Y)
+                else if (weight > midW.EndMark)
                 {
                     l = mid + 1;
                 }
