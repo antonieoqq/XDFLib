@@ -23,14 +23,14 @@ namespace XDFLib.Collections
         AList<Entry> _weightChain;
         public ReadOnlySpan<Entry> WeightChain => _weightChain.AsReadOnlySpan();
 
-        public float TopWeightMark => _topWeightMark;
+        public float TopWeightMark => _topWeight;
         public int Count => _weightDict.Count;
 
         /// <summary> 权重图，key是对象，value是权重，决定该对象被随机抽中的概率 </summary>
         Dictionary<T, float> _weightDict;
 
         bool _needRebuildChain = false;
-        float _topWeightMark = 0;
+        float _topWeight = 0;
 
         public WeightPool()
         {
@@ -49,7 +49,7 @@ namespace XDFLib.Collections
             _weightDict.Clear();
             _weightChain.Clear();
             _needRebuildChain = false;
-            _topWeightMark = 0;
+            _topWeight = 0;
         }
 
         public bool AddWeight(T obj, float weight)
@@ -60,7 +60,7 @@ namespace XDFLib.Collections
             var added = _weightDict.TryAdd(obj, weight);
             if (!added) { return false; }
 
-            CreateAndAddNewWeightItem(obj, weight, ref _topWeightMark);
+            CreateAndAddNewWeightItem(obj, weight, ref _topWeight);
             return true;
         }
 
@@ -92,10 +92,10 @@ namespace XDFLib.Collections
 
         public float GetWeightPercent(T obj)
         {
-            if (obj == null || _topWeightMark <= 0) { return 0; }
+            if (obj == null || _topWeight <= 0) { return 0; }
 
             if (_weightDict.TryGetValue(obj, out var w))
-                return w / _topWeightMark;
+                return w / _topWeight;
             else
                 return 0;
         }
@@ -103,7 +103,7 @@ namespace XDFLib.Collections
         public void RebuildWeightChain()
         {
             _weightChain.Clear();
-            _topWeightMark = 0;
+            _topWeight = 0;
 
             var iter = _weightDict.GetEnumerator();
             while (iter.MoveNext())
@@ -112,7 +112,7 @@ namespace XDFLib.Collections
                 if (weight <= 0)
                     continue;
 
-                CreateAndAddNewWeightItem(iter.Current.Key, weight, ref _topWeightMark);
+                CreateAndAddNewWeightItem(iter.Current.Key, weight, ref _topWeight);
             }
             _needRebuildChain = false;
         }
@@ -133,7 +133,7 @@ namespace XDFLib.Collections
             else if (_weightChain.Count == 1) { return _weightChain[0].Obj; }
             else
             {
-                var randW = randRate * _topWeightMark;
+                var randW = randRate * _topWeight;
                 var randIndex = BinarySearch(randW);
                 return _weightChain[randIndex].Obj;
             }
@@ -155,7 +155,7 @@ namespace XDFLib.Collections
         int BinarySearch(float weight)
         {
             var chain = WeightChain;
-            if (weight > _topWeightMark)
+            if (weight > _topWeight)
             {
                 return chain.Length - 1;
             }

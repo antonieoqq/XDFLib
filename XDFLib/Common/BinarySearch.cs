@@ -5,6 +5,58 @@ namespace XDFLib
 {
     public static class BinarySearch
     {
+        public static int IndexOfMinGreaterThan<T>(ReadOnlySpan<T> array, T value, bool ascending = true)
+            where T : IComparable<T>
+        {
+            int low = 0;
+            int high = array.Length - 1;
+            int resultIndex = -1;
+            while (low <= high)
+            {
+                int mid = low + (high - low) / 2;
+                var compare = array[mid].CompareTo(value);
+                var precede = ascending ? compare >= 0 : compare <= 0;
+                if (precede)
+                {
+                    // 可能是候选解，继续往左边找有没有更小的符合条件的
+                    resultIndex = mid;
+                    high = mid - 1;
+                }
+                else
+                {
+                    // 不满足条件，往右边缩小范围
+                    low = mid + 1;
+                }
+            }
+            return resultIndex;
+        }
+
+        public static int IndexOfMinGreaterThan<T>(IList<T> array, T value, bool ascending = true)
+            where T : IComparable<T>
+        {
+            int low = 0;
+            int high = array.Count - 1;
+            int resultIndex = -1;
+            while (low <= high)
+            {
+                int mid = low + (high - low) / 2;
+                var compare = array[mid].CompareTo(value);
+                var precede = ascending ? compare >= 0 : compare <= 0;
+                if (precede)
+                {
+                    // 可能是候选解，继续往左边找有没有更小的符合条件的
+                    resultIndex = mid;
+                    high = mid - 1;
+                }
+                else
+                {
+                    // 不满足条件，往右边缩小范围
+                    low = mid + 1;
+                }
+            }
+            return resultIndex;
+        }
+
         public static int IndexOfMaxLessThan<T>(ReadOnlySpan<T> array, T value, bool ascending = true)
             where T : IComparable<T>
         {
@@ -200,275 +252,6 @@ namespace XDFLib
 
             return closestIndex;
         }
-
-
-        //public static int BinarySearchClosest(int[] array, int value)
-        //{
-        //    int left = 0;
-        //    int right = array.Length - 1;
-
-        //    if (value <= array[left]) { return left; }
-        //    else if (value >= array[right]) { return right; }
-
-        //    int mid = -1;
-        //    while (left <= right)
-        //    {
-        //        if (left == right)
-        //        {
-        //            var midV = array[left];
-        //            if (value == midV)
-        //            {
-        //                return left;
-        //            }
-        //            else if (value < midV)
-        //            {
-        //                left--;
-        //                mid = NeighbourProcess(array, left, value);
-        //                return mid;
-        //            }
-        //            else
-        //            {
-        //                mid = NeighbourProcess(array, left, value);
-        //                return mid;
-        //            }
-        //        }
-        //        else if (left + 1 == right)
-        //        {
-        //            mid = NeighbourProcess(array, left, value);
-        //            return mid;
-        //        }
-        //        mid = (left + right) / 2;
-        //        var midValue = array[mid];
-        //        if (value == midValue)
-        //        {
-        //            return mid;
-        //        }
-        //        else if (value > midValue)
-        //        {
-        //            left = mid;
-        //        }
-        //        else if (value < midValue)
-        //        {
-        //            right = mid;
-        //        }
-        //    }
-        //    return mid;
-        //}
-
-        //static int NeighbourProcess(int[] array, int left, int searchValue)
-        //{
-        //    var leftV = array[left];
-        //    var leftDist = Math.Abs(leftV - searchValue);
-        //    var rightV = array[left + 1];
-        //    var rightDist = Math.Abs(rightV - searchValue);
-        //    return leftDist < rightDist ? left : left + 1;
-        //}
-
-        //public static int BinarySearchClosest(IList<int> list, int value)
-        //{
-        //    int left = 0;
-        //    int right = list.Count - 1;
-
-        //    if (value <= list[left])
-        //    {
-        //        return left;
-        //    }
-        //    else if (value >= list[right])
-        //    {
-        //        return right;
-        //    }
-
-        //    int mid = -1;
-        //    while (left <= right)
-        //    {
-        //        if (left == right)
-        //        {
-        //            var midV = list[left];
-        //            if (value == midV)
-        //            {
-        //                return left;
-        //            }
-        //            if (value < midV)
-        //            {
-        //                left--;
-        //                mid = NeighbourProcess(list, left, value);
-        //                return mid;
-        //            }
-        //            else
-        //            {
-        //                mid = NeighbourProcess(list, left, value);
-        //                return mid;
-        //            }
-        //        }
-        //        else if (left + 1 == right)
-        //        {
-        //            mid = NeighbourProcess(list, left, value);
-        //            return mid;
-        //        }
-        //        mid = (left + right) / 2;
-        //        var midValue = list[mid];
-        //        if (value == midValue)
-        //        {
-        //            return mid;
-        //        }
-        //        else if (value > midValue)
-        //        {
-        //            left = mid;
-        //        }
-        //        else if (value < midValue)
-        //        {
-        //            right = mid;
-        //        }
-        //    }
-        //    return mid;
-        //}
-
-        //static int NeighbourProcess(IList<int> array, int left, int searchValue)
-        //{
-        //    var leftV = array[left];
-        //    var leftDist = Math.Abs(leftV - searchValue);
-        //    var rightV = array[left + 1];
-        //    var rightDist = Math.Abs(rightV - searchValue);
-        //    return leftDist < rightDist ? left : left + 1;
-        //}
-
-
-        //public static int BinarySearchClosest(float[] array, float value)
-        //{
-        //    int left = 0;
-        //    int right = array.Length - 1;
-
-        //    if (value <= array[left])
-        //    {
-        //        return left;
-        //    }
-        //    else if (value >= array[right])
-        //    {
-        //        return right;
-        //    }
-
-        //    int mid = -1;
-        //    while (left <= right)
-        //    {
-        //        if (left == right)
-        //        {
-        //            var midV = array[left];
-        //            if (Math.Abs(value - midV) < float.Epsilon)
-        //            {
-        //                return left;
-        //            }
-        //            if (value < midV)
-        //            {
-        //                left--;
-        //                mid = NeighbourProcess(array, left, value);
-        //                return mid;
-        //            }
-        //            else
-        //            {
-        //                mid = NeighbourProcess(array, left, value);
-        //                return mid;
-        //            }
-        //        }
-        //        else if (left + 1 == right)
-        //        {
-        //            mid = NeighbourProcess(array, left, value);
-        //            return mid;
-        //        }
-        //        mid = (left + right) / 2;
-        //        var midValue = array[mid];
-        //        if (Math.Abs(value - midValue) < float.Epsilon)
-        //        {
-        //            return mid;
-        //        }
-        //        else if (value > midValue)
-        //        {
-        //            left = mid;
-        //        }
-        //        else if (value < midValue)
-        //        {
-        //            right = mid;
-        //        }
-        //    }
-        //    return mid;
-        //}
-
-        //static int NeighbourProcess(float[] array, int left, float searchValue)
-        //{
-        //    var leftV = array[left];
-        //    var leftDist = Math.Abs(leftV - searchValue);
-        //    var rightV = array[left + 1];
-        //    var rightDist = Math.Abs(rightV - searchValue);
-        //    return leftDist < rightDist ? left : left + 1;
-        //}
-
-        //public static int BinarySearchClosest(IList<float> list, float value)
-        //{
-        //    int left = 0;
-        //    int right = list.Count - 1;
-
-        //    if (value <= list[left])
-        //    {
-        //        return left;
-        //    }
-        //    else if (value >= list[right])
-        //    {
-        //        return right;
-        //    }
-
-        //    int mid = -1;
-        //    while (left <= right)
-        //    {
-        //        if (left == right)
-        //        {
-        //            var midV = list[left];
-        //            if (Math.Abs(value - midV) < float.Epsilon)
-        //            {
-        //                return left;
-        //            }
-        //            if (value < midV)
-        //            {
-        //                left--;
-        //                mid = NeighbourProcess(list, left, value);
-        //                return mid;
-        //            }
-        //            else
-        //            {
-        //                mid = NeighbourProcess(list, left, value);
-        //                return mid;
-        //            }
-        //        }
-        //        else if (left + 1 == right)
-        //        {
-        //            mid = NeighbourProcess(list, left, value);
-        //            return mid;
-        //        }
-        //        mid = (left + right) / 2;
-        //        var midValue = list[mid];
-        //        if (Math.Abs(value - midValue) < float.Epsilon)
-        //        {
-        //            return mid;
-        //        }
-        //        else if (value > midValue)
-        //        {
-        //            left = mid;
-        //        }
-        //        else if (value < midValue)
-        //        {
-        //            right = mid;
-        //        }
-        //    }
-        //    return mid;
-        //}
-
-        //static int NeighbourProcess(IList<float> list, int left, float searchValue)
-        //{
-        //    var leftV = list[left];
-        //    var leftDist = Math.Abs(leftV - searchValue);
-        //    var rightV = list[left + 1];
-        //    var rightDist = Math.Abs(rightV - searchValue);
-        //    return leftDist < rightDist ? left : left + 1;
-        //}
-
 
         public static (int? leftIndex, int? rightIndex, float lerpT) Neighbours(ReadOnlySpan<int> array, int value)
         {

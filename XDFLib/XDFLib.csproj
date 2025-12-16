@@ -4,9 +4,10 @@
     <TargetFrameworks>net9.0;net8.0;net7.0;netstandard2.1</TargetFrameworks>
     <Authors>Dafeng Xie</Authors>
     <Description>Xie Dafeng's personal C# wheels</Description>
-    <Version>4.5.0</Version>
-    <PackageReleaseNotes>4.5.0
-开发 重构优化 WeightPool</PackageReleaseNotes>
+    <Version>4.5.1</Version>
+    <PackageReleaseNotes>4.5.1
+开发 重构优化 WeightPool
+开发 BinarySearch.IndexOfMinGreaterThan&lt;T&gt; 方法</PackageReleaseNotes>
     <CopyLocalLockFileAssemblies>true</CopyLocalLockFileAssemblies>
     <PlatformTarget>x64</PlatformTarget>
     <Nullable>enable</Nullable>
