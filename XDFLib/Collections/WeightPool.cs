@@ -81,6 +81,7 @@ namespace XDFLib.Collections
         {
             if (obj == null) return;
 
+            weight = MathF.Max(MinWeight, weight);
             _weightDict[obj] = weight;
             _needRebuildChain = true;
         }
@@ -145,12 +146,12 @@ namespace XDFLib.Collections
             }
         }
 
-        void CreateAndAddNewWeightItem(T obj, float weight, ref float topWeightMark)
+        void CreateAndAddNewWeightItem(T obj, float weight, ref float topWeight)
         {
-            topWeightMark += weight;
+            topWeight += weight;
             Entry item = new Entry()
             {
-                CumulativeWeight = topWeightMark,
+                CumulativeWeight = topWeight,
                 Obj = obj
             };
             _weightChain.Add(item);
