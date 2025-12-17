@@ -12,12 +12,21 @@ namespace XDFLib.Collections
         private readonly ArrayPool<T> _pool;
         private readonly T[] _array;
 
-        public RentedArray(int minLength, ArrayPool<T>? pool = null)
+        public RentedArray(int minLength, ArrayPool<T>? pool = null, bool autoClear = true)
         {
             _pool = pool ?? ArrayPool<T>.Shared;
             _array = _pool.Rent(minLength);
             Length = minLength;
-            Array.Clear(_array, 0, minLength);
+
+            if (autoClear)
+            {
+                Clear();
+            }
+        }
+
+        public T[] GetArray()
+        {
+            return _array;
         }
 
         public void CopyTo(T[] destination, int start)
@@ -30,9 +39,14 @@ namespace XDFLib.Collections
             Array.Copy(_array, 0, destination, start, count);
         }
 
+        public void Clear()
+        {
+            Array.Clear(_array, 0, _array.Length - 1);
+        }
+
         public void Dispose()
         {
-            Array.Clear(_array, 0, Length);
+            Clear();
             _pool.Return(_array);
         }
     }
