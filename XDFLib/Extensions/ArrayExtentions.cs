@@ -11,7 +11,7 @@ namespace XDFLib.Extensions
             while (n > 1)
             {
                 n--;
-                int k = SplitMix32.Random(n + 1);
+                int k = SplitMix32.Random(0, n + 1);
                 T value = values[k];
                 values[k] = values[n];
                 values[n] = value;
