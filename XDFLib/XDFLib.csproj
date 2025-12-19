@@ -4,11 +4,12 @@
     <TargetFrameworks>net10.0;net9.0;net8.0;net7.0;netstandard2.1</TargetFrameworks>
     <Authors>Dafeng Xie</Authors>
     <Description>Xie Dafeng's personal C# wheels</Description>
-    <Version>4.6.3</Version>
-    <PackageReleaseNotes>4.6.3
+    <Version>4.6.4</Version>
+    <PackageReleaseNotes>4.6.4
 开发 readonly ref struct RentedArray&lt;T&gt;
 修复 Array.Shuffle 的错误
-添加编译 .NET 10</PackageReleaseNotes>
+添加编译 .NET 10
+开发 限制 RentedArray 最小长度为 2，以防止 Rent 0 长度的情况</PackageReleaseNotes>
     <CopyLocalLockFileAssemblies>true</CopyLocalLockFileAssemblies>
     <PlatformTarget>x64</PlatformTarget>
     <Nullable>enable</Nullable>

@@ -6,6 +6,7 @@ namespace XDFLib.Collections
     /// <summary> A lightweight struct that rents an array from the ArrayPool and returns it on Dispose. </summary>
     public readonly ref struct RentedArray<T>
     {
+        public const int MinimumArrayLength = 2;
         public readonly int Length;
         public Span<T> Span => _array.AsSpan(0, Length);
 
@@ -14,9 +15,9 @@ namespace XDFLib.Collections
 
         public RentedArray(int minLength, ArrayPool<T>? pool = null, bool autoClear = true)
         {
+            Length = Math.Max(minLength, MinimumArrayLength);
             _pool = pool ?? ArrayPool<T>.Shared;
-            _array = _pool.Rent(minLength);
-            Length = minLength;
+            _array = _pool.Rent(Length);
 
             if (autoClear)
             {
