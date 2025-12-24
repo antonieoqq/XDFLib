@@ -8,36 +8,6 @@ namespace XDFLib
 {
     public static class EnumHelper
     {
-        private static unsafe int EnumAsInt32<T>(T item) where T : unmanaged, Enum
-        {
-            return *(int*)(&item);
-        }
-
-        private static unsafe ulong EnumAsULong64<T>(T item) where T : unmanaged, Enum
-        {
-            ulong x;
-            if (sizeof(T) == 1)
-                x = *(byte*)(&item);
-            else if (sizeof(T) == 2)
-                x = *(ushort*)(&item);
-            else if (sizeof(T) == 4)
-                x = *(uint*)(&item);
-            else if (sizeof(T) == 8)
-                x = *(ulong*)(&item);
-            else
-                throw new ArgumentException("Argument is not a usual enum type; it is not 1, 2, 4, or 8 bytes in length.");
-            return x;
-        }
-
-        // 不要尝试在函数中调用 EnumAsInt32, 会有性能损失
-        public static unsafe bool BitwiseAnd<T>(T enum1, T enum2) where T : unmanaged, Enum
-        {
-            var e1 = *(int*)(&enum1);
-            var e2 = *(int*)(&enum2);
-            var match = e1 & e2;
-            return match != 0;
-        }
-
         public static T GetRandomEnum<T>() where T : struct, Enum
         {
             var values = Enum.GetValues(typeof(T));
