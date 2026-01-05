@@ -297,6 +297,7 @@ namespace XDFLib
             }
         }
 
+        [Obsolete("Use Compressor instead")]
         public static void CopyTo(Stream src, Stream dest)
         {
             byte[] bytes = new byte[4096];
@@ -309,6 +310,7 @@ namespace XDFLib
             }
         }
 
+        [Obsolete("Use Compressor instead")]
         public static byte[] Zip(byte[] bytes)
         {
             using (var msi = new MemoryStream(bytes))
@@ -323,6 +325,7 @@ namespace XDFLib
             }
         }
 
+        [Obsolete("Use Compressor instead")]
         public static byte[] Unzip(byte[] bytes)
         {
             using (var msi = new MemoryStream(bytes))
@@ -337,12 +340,14 @@ namespace XDFLib
             }
         }
 
+        [Obsolete("Use Compressor.ZipFromStringAsync instead")]
         public static byte[] Zip_FromString(string str)
         {
             var bytes = Encoding.UTF8.GetBytes(str);
             return Zip(bytes);
         }
 
+        [Obsolete("Use Compressor.UnzipToStringAsync instead")]
         public static string Unzip_ToString(byte[] bytes)
         {
             var unziped = Unzip(bytes);
@@ -410,7 +415,7 @@ namespace XDFLib
         /// </summary>
         /// <param name="plainText"></param>
         /// <returns></returns>
-        [Obsolete]
+        [Obsolete("Use XDFLib.Encryption instead")]
         public static byte[] EncryptStringToBytes(string plainText)
         {
             // Check arguments.
@@ -458,7 +463,7 @@ namespace XDFLib
         /// </summary>
         /// <param name="cipherText"></param>
         /// <returns></returns>        
-        [Obsolete]
+        [Obsolete("Use XDFLib.Encryption instead")]
         public static string DecryptStringFromBytes(byte[] cipherText, Action onException = null)
         {
             // Check arguments.

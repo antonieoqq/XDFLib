@@ -4,9 +4,10 @@
     <TargetFrameworks>net10.0;net9.0;net8.0;net7.0;netstandard2.1</TargetFrameworks>
     <Authors>Dafeng Xie</Authors>
     <Description>Xie Dafeng's personal C# wheels</Description>
-    <Version>4.7.0</Version>
-    <PackageReleaseNotes>4.7.0
-开发 新的 Encryption 类，取代 FileHelper 中的过时的加密方法</PackageReleaseNotes>
+    <Version>4.7.1</Version>
+    <PackageReleaseNotes>4.7.1
+开发 新的 Encryption 类，取代 FileHelper 中的过时的加密方法
+开发 新的 Compressor 类，取代 FileHelper 中的所有压缩方法</PackageReleaseNotes>
     <CopyLocalLockFileAssemblies>true</CopyLocalLockFileAssemblies>
     <PlatformTarget>x64</PlatformTarget>
     <Nullable>enable</Nullable>
