@@ -1,17 +1,23 @@
 ﻿using System;
+using System.Buffers;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.IO.Compression;
 using System.Security.Cryptography;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
+using XDFLib.Collections;
 
 namespace XDFLib
 {
     public static class FileHelper
     {
         public const int MaxSizeOfReadFileChunck = 100 * 1024 * 1024; // 100 MB
+
+        private const int BufferSize = 128 * 1024; // 128KB
+        private const int SampleSize = 4096;      // 4KB
 
         public static void TryOpenDirAndSelectFile(string filePath)
         {
@@ -247,6 +253,165 @@ namespace XDFLib
             return fileHashString;
         }
 
+        public static bool AreFilesEqual(string path1, string path2)
+        {
+            var file1 = new FileInfo(path1);
+            var file2 = new FileInfo(path2);
+
+            // 1. 基础长度校验
+            if (file1.Length != file2.Length) return false;
+            if (string.Equals(file1.FullName, file2.FullName, StringComparison.OrdinalIgnoreCase)) return true;
+            if (file1.Length == 0) return true;
+
+            // 2. 抽样校验 (头、中、尾) - 极速排除差异文件
+            if (!PassSampleCheck(file1, file2)) return false;
+
+            // 3. 完整校验 (使用 ArrayPool)
+            return PassFullCheck(file1, file2);
+        }
+
+        private static bool PassSampleCheck(FileInfo f1, FileInfo f2)
+        {
+            // 如果文件太小，采样没意义，直接走全量比对
+            if (f1.Length <= SampleSize * 3) return true;
+
+            using var s1 = new RentedArray<byte>(SampleSize);
+            using var s2 = new RentedArray<byte>(SampleSize);
+
+            using var fs1 = f1.OpenRead();
+            using var fs2 = f2.OpenRead();
+
+            long[] offsets = { 0, f1.Length / 2 - SampleSize / 2, f1.Length - SampleSize };
+
+            foreach (var offset in offsets)
+            {
+                fs1.Seek(offset, SeekOrigin.Begin);
+                fs2.Seek(offset, SeekOrigin.Begin);
+
+                // 使用 Span 确保读取长度准确
+                int read1 = fs1.Read(s1.Span);
+                int read2 = fs2.Read(s2.Span);
+
+                if (read1 != read2 || !s1.Span.SequenceEqual(s2.Span))
+                    return false;
+            }
+
+            return true;
+        }
+
+        private static bool PassFullCheck(FileInfo f1, FileInfo f2)
+        {
+            using var b1 = new RentedArray<byte>(BufferSize);
+            using var b2 = new RentedArray<byte>(BufferSize);
+
+            using var fs1 = f1.OpenRead();
+            using var fs2 = f2.OpenRead();
+
+            while (true)
+            {
+                // 在 .NET Standard 2.1 中，FileStream.Read(Span<byte>) 是内置支持的
+                int read1 = fs1.Read(b1.Span);
+                int read2 = fs2.Read(b2.Span);
+
+                if (read1 != read2) return false;
+                if (read1 == 0) break; // 读取完毕
+
+                // 使用 Span 进行矢量化比对
+                if (!b1.Span.Slice(0, read1).SequenceEqual(b2.Span.Slice(0, read2)))
+                    return false;
+            }
+
+            return true;
+        }
+
+        public static async Task<bool> AreFilesEqualAsync(string path1, string path2, CancellationToken cancellationToken = default)
+        {
+            var file1 = new FileInfo(path1);
+            var file2 = new FileInfo(path2);
+
+            // 1. 物理检查 (同步即可)
+            if (file1.Length != file2.Length) return false;
+            if (string.Equals(file1.FullName, file2.FullName, StringComparison.OrdinalIgnoreCase)) return true;
+            if (file1.Length == 0) return true;
+
+            // 2. 采样检查 (异步)
+            if (!await PassSampleCheckAsync(file1, file2, cancellationToken)) return false;
+
+            // 3. 全量检查 (异步)
+            return await PassFullCheckAsync(file1, file2, cancellationToken);
+        }
+
+        private static async Task<bool> PassSampleCheckAsync(FileInfo f1, FileInfo f2, CancellationToken ct)
+        {
+            if (f1.Length <= SampleSize * 3) return true;
+
+            byte[] s1 = ArrayPool<byte>.Shared.Rent(SampleSize);
+            byte[] s2 = ArrayPool<byte>.Shared.Rent(SampleSize);
+            try
+            {
+                using var fs1 = f1.OpenRead();
+                using var fs2 = f2.OpenRead();
+
+                long[] offsets = { 0, f1.Length / 2 - SampleSize / 2, f1.Length - SampleSize };
+
+                foreach (var offset in offsets)
+                {
+                    fs1.Seek(offset, SeekOrigin.Begin);
+                    fs2.Seek(offset, SeekOrigin.Begin);
+
+                    // .NET Standard 2.1: ReadAsync 接受 Memory<byte>
+                    int read1 = await fs1.ReadAsync(s1.AsMemory(0, SampleSize), ct);
+                    int read2 = await fs2.ReadAsync(s2.AsMemory(0, SampleSize), ct);
+
+                    if (read1 != read2 || !s1.AsSpan(0, read1).SequenceEqual(s2.AsSpan(0, read2)))
+                        return false;
+                }
+                return true;
+            }
+            finally
+            {
+                ArrayPool<byte>.Shared.Return(s1);
+                ArrayPool<byte>.Shared.Return(s2);
+            }
+        }
+
+        private static async Task<bool> PassFullCheckAsync(FileInfo f1, FileInfo f2, CancellationToken ct)
+        {
+            byte[] b1 = ArrayPool<byte>.Shared.Rent(BufferSize);
+            byte[] b2 = ArrayPool<byte>.Shared.Rent(BufferSize);
+
+            try
+            {
+                // 使用 FileOptions.Asynchronous 优化大文件 IO
+                using var fs1 = new FileStream(f1.FullName, FileMode.Open, FileAccess.Read, FileShare.Read, BufferSize, FileOptions.Asynchronous);
+                using var fs2 = new FileStream(f2.FullName, FileMode.Open, FileAccess.Read, FileShare.Read, BufferSize, FileOptions.Asynchronous);
+
+                while (true)
+                {
+                    // 并行发出读取请求，提高 IO 利用率
+                    var t1 = fs1.ReadAsync(b1.AsMemory(0, BufferSize), ct);
+                    var t2 = fs2.ReadAsync(b2.AsMemory(0, BufferSize), ct);
+
+                    int r1 = await t1;
+                    int r2 = await t2;
+
+                    if (r1 != r2) return false;
+                    if (r1 == 0) break;
+
+                    // 比较时使用 Span 触发 SIMD 优化
+                    if (!b1.AsSpan(0, r1).SequenceEqual(b2.AsSpan(0, r2)))
+                        return false;
+                }
+                return true;
+            }
+            finally
+            {
+                ArrayPool<byte>.Shared.Return(b1);
+                ArrayPool<byte>.Shared.Return(b2);
+            }
+        }
+
+        [Obsolete("Use AreFilesEqual(Async) instead")]
         public static bool CompareTwoFilesStraightforward(string filePath1, string filePath2)
         {
             if (filePath1 == filePath2)

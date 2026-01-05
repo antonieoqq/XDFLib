@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Buffers;
+using System.Runtime.CompilerServices;
 
 namespace XDFLib.Collections
 {
@@ -8,26 +9,33 @@ namespace XDFLib.Collections
     {
         public const int MinimumArrayLength = 2;
         public readonly int Length;
-        public Span<T> Span => _array.AsSpan(0, Length);
-
         private readonly ArrayPool<T> _pool;
         private readonly T[] _array;
 
-        public RentedArray(int minLength, ArrayPool<T>? pool = null, bool autoClear = true)
+        public Span<T> Span => _array.AsSpan(0, Length);
+        public T[] InternalArray => _array;
+
+        public RentedArray(int minLength, ArrayPool<T>? pool = null)
         {
             Length = Math.Max(minLength, MinimumArrayLength);
             _pool = pool ?? ArrayPool<T>.Shared;
             _array = _pool.Rent(Length);
+        }
 
-            if (autoClear)
+
+        public ref T this[int index]
+        {
+            [MethodImpl(MethodImplOptions.AggressiveInlining)]
+            get
             {
-                Clear();
+                if ((uint)index >= (uint)Length) ThrowIndexOutOfRange();
+                return ref _array[index];
             }
         }
 
-        public T[] GetArray()
+        public void CopyTo(Span<T> destination)
         {
-            return _array;
+            Span.CopyTo(destination);
         }
 
         public void CopyTo(T[] destination, int start)
@@ -40,15 +48,12 @@ namespace XDFLib.Collections
             Array.Copy(_array, 0, destination, start, count);
         }
 
-        public void Clear()
-        {
-            Array.Clear(_array, 0, _array.Length - 1);
-        }
-
         public void Dispose()
         {
-            Clear();
-            _pool.Return(_array);
+            _pool.Return(_array, clearArray: true);
         }
+
+        [MethodImpl(MethodImplOptions.NoInlining)]
+        private static void ThrowIndexOutOfRange() => throw new IndexOutOfRangeException();
     }
 }
