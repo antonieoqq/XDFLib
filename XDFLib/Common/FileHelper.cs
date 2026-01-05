@@ -359,6 +359,7 @@ namespace XDFLib
         /// </summary>
         /// <param name="text">The text.</param>
         /// <returns></returns>
+        [Obsolete("Use Compressor.ZipFromStringAsync instead")]
         public static string CompressString(string text)
         {
             byte[] buffer = Encoding.UTF8.GetBytes(text);
@@ -386,6 +387,7 @@ namespace XDFLib
         /// </summary>
         /// <param name="compressedText">The compressed text.</param>
         /// <returns></returns>
+        [Obsolete("Use Compressor.UnzipToStringAsync instead")]
         public static string DecompressString(string compressedText)
         {
             byte[] gZipBuffer = Convert.FromBase64String(compressedText);
