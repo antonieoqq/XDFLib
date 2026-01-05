@@ -8,7 +8,8 @@
     <PackageReleaseNotes>4.7.2
 开发 新的 Encryption 类，取代 FileHelper 中的过时的加密方法
 开发 新的 Compressor 类，取代 FileHelper 中的所有压缩方法
-开发 新的 文件全量比较方法 AreFilesEqual(Async)，取代原本的比较方法</PackageReleaseNotes>
+开发 新的 文件全量比较方法 AreFilesEqual(Async)，取代原本的比较方法
+开发 优化 RentedArray 的内部实现，并调整了一些接口</PackageReleaseNotes>
     <CopyLocalLockFileAssemblies>true</CopyLocalLockFileAssemblies>
     <PlatformTarget>x64</PlatformTarget>
     <Nullable>enable</Nullable>
