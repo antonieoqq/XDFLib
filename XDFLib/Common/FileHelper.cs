@@ -410,6 +410,7 @@ namespace XDFLib
         /// </summary>
         /// <param name="plainText"></param>
         /// <returns></returns>
+        [Obsolete]
         public static byte[] EncryptStringToBytes(string plainText)
         {
             // Check arguments.
@@ -456,7 +457,8 @@ namespace XDFLib
         /// 把字节串解密并返回字符串
         /// </summary>
         /// <param name="cipherText"></param>
-        /// <returns></returns>
+        /// <returns></returns>        
+        [Obsolete]
         public static string DecryptStringFromBytes(byte[] cipherText, Action onException = null)
         {
             // Check arguments.
