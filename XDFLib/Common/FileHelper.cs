@@ -27,6 +27,7 @@ namespace XDFLib
             }
         }
 
+        [Obsolete]
         public static void MakeSureSaveDirectory(string directory)
         {
             var dir = new DirectoryInfo(directory);
@@ -35,75 +36,108 @@ namespace XDFLib
             dir.Create();
         }
 
+        /// <summary>
+        /// 高性能拼接路径，始终使用 '/' 作为分隔符。
+        /// 实现了零临时对象分配 (Zero-copy) 和 零中间字符串拷贝。
+        /// </summary>
         public static string JoinPathes(params string[] pathes)
         {
-            int totalLength = pathes.Length;
-            foreach (var p in pathes)
+            if (pathes == null || pathes.Length == 0) return string.Empty;
+
+            // 1. 第一次遍历：精确计算长度
+            int finalLength = 0;
+            int validSegments = 0;
+
+            for (int i = 0; i < pathes.Length; i++)
             {
-                totalLength += p.Length;
+                // 使用 Trim 修剪掉开头和结尾所有的反斜杠和正斜杠
+                ReadOnlySpan<char> part = pathes[i].AsSpan().Trim('/').Trim('\\');
+
+                if (part.IsEmpty) continue;
+
+                if (validSegments > 0) finalLength++; // 补齐中间的一个 '/'
+                finalLength += part.Length;
+                validSegments++;
             }
 
-            StringBuilder strB = new StringBuilder(totalLength);
-            bool isFirst = true;
-            char prevLastChar = char.MinValue;
-            foreach (var p in pathes)
-            {
-                if (p.Length == 0)
-                {
-                    continue;
-                }
-                char currFirstChar = p[0];
+            if (finalLength == 0) return string.Empty;
 
-                if (isFirst)
+            // 2. 第二次遍历：构造字符串
+            return string.Create(finalLength, pathes, (buffer, state) =>
+            {
+                int currentPos = 0;
+                const char targetSep = '/';
+                bool isFirst = true;
+
+                for (int i = 0; i < state.Length; i++)
                 {
+                    // 必须使用与长度计算完全一致的 Trim 逻辑
+                    ReadOnlySpan<char> part = state[i].AsSpan().Trim('/').Trim('\\');
+
+                    if (part.IsEmpty) continue;
+
+                    // 插入分隔符
+                    if (!isFirst)
+                    {
+                        buffer[currentPos++] = targetSep;
+                    }
+
+                    // 写入内容并转换中间可能存在的反斜杠
+                    foreach (char c in part)
+                    {
+                        buffer[currentPos++] = (c == '\\') ? targetSep : c;
+                    }
+
                     isFirst = false;
                 }
-                else
-                {
-                    if (prevLastChar != '\\' && prevLastChar != '/'
-                        && currFirstChar != '\\' && currFirstChar != '/')
-                    {
-                        strB.Append('/');
-                    }
-                }
-
-                strB.Append(p);
-                prevLastChar = p[p.Length - 1];
-            }
-
-            strB = strB.Replace('\\', '/');
-            return strB.ToString();
+            });
         }
 
+        public static void ForeachLineInFile(string path, Action<string> onReadLine)
+        {
+            if (onReadLine == null) return;
+            using var reader = new StreamReader(path, Encoding.UTF8);
+            string? line;
+            while ((line = reader.ReadLine()) != null)
+            {
+                onReadLine(line);
+            }
+        }
+
+        public static async Task ForeachLineInFileAsync(string path, Action<string> onReadLine)
+        {
+            if (onReadLine == null) return;
+            using var reader = new StreamReader(path, Encoding.UTF8);
+            string? line;
+            while ((line = await reader.ReadLineAsync()) != null)
+            {
+                onReadLine(line);
+            }
+        }
+
+        [Obsolete("Use ForeachLineInFile instead")]
         public static void ReadLinesToCollection(string path, ICollection<string> dest)
         {
-            using (StreamReader sr = new StreamReader(path))
+            using var reader = new StreamReader(path, Encoding.UTF8);
+            string? line;
+            while ((line = reader.ReadLine()) != null)
             {
-                string line;
-                while ((line = sr.ReadLine()) != null)
-                {
-                    dest.Add(line);
-                }
+                dest.Add(line);
             }
         }
 
+        [Obsolete("Use ForeachLineInFileAsync instead")]
         public static async Task ReadLinesToCollectionAsync(string path, ICollection<string> dest)
         {
-            using (StreamReader sr = new StreamReader(path))
+            using var reader = new StreamReader(path, Encoding.UTF8);
+            string? line;
+            while ((line = await reader.ReadLineAsync()) != null)
             {
-                string line;
-                while (true)
-                {
-                    line = await sr.ReadLineAsync();
-                    if (line == null)
-                    {
-                        break;
-                    }
-                    dest.Add(line);
-                }
+                dest.Add(line);
             }
         }
 
+        [Obsolete("Use File.ReadAllText instead")]
         public static string ReadStringFromFile(string path)
         {
             using (StreamReader sr = new StreamReader(path))
@@ -112,6 +146,7 @@ namespace XDFLib
             }
         }
 
+        [Obsolete("Use File.WriteAllText instead")]
         public static void SaveStringToFile(string path, string content)
         {
             using (StreamWriter sw = new StreamWriter(path))
@@ -120,6 +155,7 @@ namespace XDFLib
             }
         }
 
+        [Obsolete("Use SaveTextToFileAsync instead")]
         public static bool TryCreateDirectoryAndSaveStringToFile(string path, string content)
         {
             var dir = Path.GetDirectoryName(path);
@@ -129,6 +165,18 @@ namespace XDFLib
             return true;
         }
 
+        public static async Task SaveTextToFileAsync(string path, string text)
+        {
+            var dir = Path.GetDirectoryName(path);
+            if (!string.IsNullOrEmpty(dir) && !Directory.Exists(dir))
+            {
+                Directory.CreateDirectory(dir);
+            }
+
+            await File.WriteAllTextAsync(path, text);
+        }
+
+        [Obsolete("Use File.ReadAllTextAsync instead")]
         public static async Task<string> ReadStringFromFileAsync(string path)
         {
             using (StreamReader sr = new StreamReader(path))
@@ -138,6 +186,7 @@ namespace XDFLib
             }
         }
 
+        [Obsolete("Use File.WriteAllTextAsync instead")]
         public static async Task SaveStringToFileAsync(string path, string content)
         {
             using (StreamWriter sw = new StreamWriter(path))
@@ -146,6 +195,7 @@ namespace XDFLib
             }
         }
 
+        [Obsolete("Use CopyFileAsync instead")]
         public static void CopyFile(string sourcePath, string destinationPath)
         {
             var dir = Path.GetDirectoryName(destinationPath);
@@ -159,17 +209,60 @@ namespace XDFLib
             }
         }
 
-        public static async Task CopyFileAsync(string sourcePath, string destinationPath)
+        public static async Task CopyFileAsync(string sourcePath, string destPath)
         {
-            var dir = Path.GetDirectoryName(destinationPath);
-            Directory.CreateDirectory(dir);
+            if (!File.Exists(sourcePath))
+                throw new FileNotFoundException("source file is not exist", sourcePath);
 
-            using (var source = File.Open(sourcePath, FileMode.Open))
+            // 自动创建目标文件夹
+            string? destFolder = Path.GetDirectoryName(destPath);
+            if (!string.IsNullOrEmpty(destFolder))
             {
-                using (var dest = File.Create(destinationPath))
+                Directory.CreateDirectory(destFolder);
+            }
+
+            // 拷贝逻辑
+            using var source = File.OpenRead(sourcePath);
+            using var dest = File.Create(destPath);
+            await source.CopyToAsync(dest);
+        }
+
+        public static async Task CopyFileWithProgressAsync(
+            string sourcePath,
+            string destPath,
+            IProgress<double> progress,
+            CancellationToken ct = default)
+        {
+            const int bufferSize = 1024 * 128; // 租用 128KB 缓冲区
+
+            // 从共享池中租用数组
+            byte[] buffer = ArrayPool<byte>.Shared.Rent(bufferSize);
+
+            try
+            {
+                using var source = new FileStream(sourcePath, FileMode.Open, FileAccess.Read, FileShare.Read, bufferSize, useAsync: true);
+                using var dest = new FileStream(destPath, FileMode.Create, FileAccess.Write, FileShare.None, bufferSize, useAsync: true);
+
+                long totalBytes = source.Length;
+                long totalRead = 0;
+                int bytesRead;
+
+                // 注意：使用 buffer.AsMemory() 配合 Standard 2.1 的异步读取
+                while ((bytesRead = await source.ReadAsync(buffer.AsMemory(0, buffer.Length), ct)) > 0)
                 {
-                    await source.CopyToAsync(dest);
+                    await dest.WriteAsync(buffer.AsMemory(0, bytesRead), ct);
+
+                    totalRead += bytesRead;
+                    if (totalBytes > 0)
+                    {
+                        double percentage = (double)totalRead / totalBytes * 100;
+                        progress?.Report(percentage);
+                    }
                 }
+            }
+            finally
+            {
+                ArrayPool<byte>.Shared.Return(buffer);
             }
         }
 
@@ -178,6 +271,7 @@ namespace XDFLib
         /// </summary>
         /// <param name="path"></param>
         /// <returns></returns>
+        [Obsolete("Use File.ReadAllBytes(Async) instead")]
         public static byte[] ReadByteArrayFromFile(string path)
         {
             using (var fs = new FileStream(path, FileMode.Open))
@@ -188,18 +282,21 @@ namespace XDFLib
             }
         }
 
+        [Obsolete]
         public static byte[] ComputeHash(byte[] bytes)
         {
             var hashBytes = new MD5CryptoServiceProvider().ComputeHash(bytes);
             return hashBytes;
         }
 
+        [Obsolete]
         public static byte[] ComputeHash(Stream stream)
         {
             var hashBytes = new MD5CryptoServiceProvider().ComputeHash(stream);
             return hashBytes;
         }
 
+        [Obsolete]
         public static string ByteArrayToString(byte[] arrInput)
         {
             int i;
@@ -211,25 +308,13 @@ namespace XDFLib
             return sOutput.ToString();
         }
 
-
+        [Obsolete("Use array<T>.AreSequenceEqual extension instead")]
         public static bool AreTwoByteArraysEqual(byte[] arr1, byte[] arr2)
         {
-            bool isEqual = false;
-            if (arr1.Length == arr2.Length)
-            {
-                int i = 0;
-                while ((i < arr1.Length) && (arr1[i] == arr2[i]))
-                {
-                    i += 1;
-                }
-                if (i == arr1.Length)
-                {
-                    isEqual = true;
-                }
-            }
-            return isEqual;
+            return arr1.AsSpan().SequenceEqual(arr2.AsSpan());
         }
 
+        [Obsolete("Use AreFilesEqual instead")]
         public static byte[] ComputeHashOfFile(string path)
         {
             using (var fs = new FileStream(path, FileMode.Open))
@@ -239,6 +324,7 @@ namespace XDFLib
             }
         }
 
+        [Obsolete("Use AreFilesEqual instead")]
         public static bool ComapreTwoFilesViaHash(string filePath1, string filePath2)
         {
             var fileHash1 = ComputeHashOfFile(filePath1);
@@ -246,6 +332,7 @@ namespace XDFLib
             return AreTwoByteArraysEqual(fileHash1, fileHash2);
         }
 
+        [Obsolete]
         public static string ComputeHashStringOfFile(string path)
         {
             var fileHash = ComputeHashOfFile(path);

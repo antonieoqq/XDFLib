@@ -5,6 +5,12 @@ namespace XDFLib.Extensions
 {
     public static class ArrayExtentions
     {
+        public static bool AreSequenceEqual<T>(this T[] self, ReadOnlySpan<T> other)
+            where T : IEquatable<T>
+        {
+            return self.AsSpan().SequenceEqual(other);
+        }
+
         public static void Shuffle<T>(this T[] values)
         {
             int n = values.Length;
