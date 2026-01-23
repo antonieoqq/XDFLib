@@ -7,6 +7,50 @@ namespace XDFLib
     {
         public const float Sqrt2 = 1.41421356237f;
 
+        public static float QuickPow(float x, int exp)
+        {
+            if (exp == 0) return 1.0f;
+            if (exp < 0)
+            {
+                x = 1 / x;
+                exp = -exp;
+            }
+            float result = 1;
+            float currentProduct = x;
+            while (exp > 0)
+            {
+                if ((exp & 1) == 1)
+                {
+                    result *= currentProduct;
+                }
+                currentProduct *= currentProduct;
+                exp >>= 1;
+            }
+            return result;
+        }
+
+        public static double QuickPow(double x, int exp)
+        {
+            if (exp == 0) return 1.0;
+            if (exp < 0)
+            {
+                x = 1 / x;
+                exp = -exp;
+            }
+            double result = 1;
+            double currentProduct = x;
+            while (exp > 0)
+            {
+                if ((exp & 1) == 1)
+                {
+                    result *= currentProduct;
+                }
+                currentProduct *= currentProduct;
+                exp >>= 1;
+            }
+            return result;
+        }
+
         public static float Lerp(float from, float to, float t)
         {
             if (from == to) return from;
@@ -201,6 +245,7 @@ namespace XDFLib
         /// <param name="start"></param>
         /// <param name="end"></param>
         /// <returns></returns>
+        [Obsolete("Use Loop instead")]
         public static int LoopOld(int v, int start, int end)
         {
             if (start == end) return start;
@@ -214,6 +259,7 @@ namespace XDFLib
             return firstMod + start + (firstMod < 0 ? repeatLength : 0);
         }
 
+        [Obsolete("Use Loop instead")]
         public static float LoopOld(float v, float start, float end)
         {
             if (start == end) return start;
