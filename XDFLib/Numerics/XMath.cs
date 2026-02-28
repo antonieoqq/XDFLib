@@ -226,6 +226,9 @@ namespace XDFLib
 
         public static int Loop(int v, int count)
         {
+            if (count <= 0)
+                throw new ArgumentOutOfRangeException(nameof(count), "Count must be positive.");
+
             var m = v % count;
             var r = m >= 0 ? m : m + count;
             return r;
