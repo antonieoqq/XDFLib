@@ -53,6 +53,18 @@ namespace XDFLib.Collections
             _pool.Return(_array, clearArray: true);
         }
 
+        public bool Contains(T item)
+        {
+            foreach (var e in Span)
+            {
+                if (Utilities.AreEqual(e, item))
+                {
+                    return true;
+                }
+            }
+            return false;
+        }
+
         [MethodImpl(MethodImplOptions.NoInlining)]
         private static void ThrowIndexOutOfRange() => throw new IndexOutOfRangeException();
     }

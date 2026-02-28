@@ -467,6 +467,49 @@ namespace XDFLib.Collections
             return false;
         }
 
+        public void RemoveWhere(Predicate<T> predicate)
+        {
+            using RentedArray<int> deletions = new RentedArray<int>(_count);
+            int delCount = 0;
+            for (int i = 0; i < _count; i++)
+            {
+                var e = this[i];
+                if (!predicate(e)) continue;
+
+                deletions.Span[delCount++] = i;
+            }
+
+            if (delCount == 0) return;
+            if (delCount == 1)
+            {
+                RemoveAt(deletions.Span[0]);
+                return;
+            }
+            if (delCount == _count)
+            {
+                Clear();
+                return;
+            }
+
+            /// 因为 deletions 是升序收集的，接下来遍历也采用升序，所以可以直接对应双索引
+            /// 跳过删除的索引并左移成员，从而实现一次性删除的效果，避免多次删除引起的性能浪费
+            int delIndex = 0;
+            int writeIndex = 0;
+            for (int readIndex = 0; readIndex < _count; readIndex++)
+            {
+                if (delIndex < delCount && deletions.Span[delIndex] == readIndex) {
+                    delIndex++;
+                    continue;
+                }
+                this[writeIndex++] = this[readIndex];
+            }
+            for (int i = writeIndex; i < _count; i++)
+            {
+                this[i] = default;
+            }
+            _count = _count - delCount;
+        }
+
         public int IndexOf(T item)
         {
             for (int i = 0; i < _count; i++)

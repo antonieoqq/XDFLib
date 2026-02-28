@@ -16,7 +16,7 @@ namespace XDFLib
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static bool AreEqual<T>(T a, T b)
+        public static bool AreEqual<T>(in T a, in T b)
         {
             return EqualityComparer<T>.Default.Equals(a, b);
         }
