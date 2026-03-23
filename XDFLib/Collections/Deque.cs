@@ -433,6 +433,7 @@ namespace XDFLib.Collections
                 _array[index] = item;
                 index++;
             }
+            _count = newCount;
         }
 
         public bool Contains(T item)

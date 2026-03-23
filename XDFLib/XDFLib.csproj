@@ -4,25 +4,9 @@
     <TargetFrameworks>net10.0;net9.0;net8.0;netstandard2.1</TargetFrameworks>
     <Authors>Dafeng Xie</Authors>
     <Description>Xie Dafeng's personal C# wheels</Description>
-    <Version>4.7.6</Version>
-    <PackageReleaseNotes>4.7.0
-开发 新的 Encryption 类，取代 FileHelper 中的过时的加密方法
-4.7.1
-开发 新的 Compressor 类，取代 FileHelper 中的所有压缩方法
-4.7.2
-开发 新的 文件全量比较方法 AreFilesEqual(Async)，取代原本的比较方法
-开发 优化 RentedArray 的内部实现，并调整了一些接口
-4.7.3
-不再支持 .NET 7
-开发 废弃 FileHelper 中大量过时的方法，改进了一部分方法，或提供了改进版本
-开发 全新的 0 GC，始终使用 /  为分割符的 FileHelper.JoinPathes 方法
-开发 为 T[] 封装了高性能的 AreSequenceEqual 比较方法（在更高版本的 C# 中，T[] 直接有 SequenceEqual，不需要此扩展）
-4.7.4
-开发 XMath.QuickPow，专门处理指数为整数的高性能幂运算，取代Math.Pow
-4.7.5
-开发 XMath.Loop(int v, int count) 在 count &lt;= 0 时现在会抛出可读性高的异常
-4.7.6
-开发 Deque 增加新方法 void RemoveWhere(Predicate&lt;T&gt; predicate)，用于基于条件批量删除成员（存在潜在的闭包开销）</PackageReleaseNotes>
+    <Version>4.8.0</Version>
+    <PackageReleaseNotes>4.8.0
+开发 重新实现 Span.QuickSort，以改进性能</PackageReleaseNotes>
     <CopyLocalLockFileAssemblies>true</CopyLocalLockFileAssemblies>
     <PlatformTarget>x64</PlatformTarget>
     <Nullable>enable</Nullable>

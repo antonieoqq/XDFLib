@@ -73,37 +73,140 @@ namespace XDFLib.Extensions
             }
         }
 
+        //public static void QuickSort<T>(this Span<T> span, Comparison<T> comparison)
+        //{
+        //    QuickSort(span, 0, span.Length - 1, comparison);
+        //}
+
+        //public static void QuickSort<T>(this Span<T> span, int left, int right, Comparison<T> comparison)
+        //{
+        //    if (left < right)
+        //    {
+        //        int pivotIndex = Partition(span, left, right, comparison);
+        //        QuickSort(span, left, pivotIndex - 1, comparison);
+        //        QuickSort(span, pivotIndex + 1, right, comparison);
+        //    }
+        //}
+
+        //private static int Partition<T>(Span<T> span, int left, int right, Comparison<T> comparison)
+        //{
+        //    T pivot = span[right];
+        //    int i = left - 1;
+
+        //    for (int j = left; j < right; j++)
+        //    {
+        //        if (comparison(span[j], pivot) <= 0)
+        //        {
+        //            i++;
+        //            Swap(span, i, j);
+        //        }
+        //    }
+
+        //    Swap(span, i + 1, right);
+        //    return i + 1;
+        //}
+
+        //private static void Swap<T>(Span<T> span, int i, int j)
+        //{
+        //    T temp = span[i];
+        //    span[i] = span[j];
+        //    span[j] = temp;
+        //}
+
+        #region Sort
+        private const int InsertionSortThreshold = 16;
+        private static Stack<(int left, int right)> _tempStack = new Stack<(int left, int right)>(64);
+
         public static void QuickSort<T>(this Span<T> span, Comparison<T> comparison)
         {
-            QuickSort(span, 0, span.Length - 1, comparison);
-        }
+            if (span.Length < 2) return;
 
-        public static void QuickSort<T>(this Span<T> span, int left, int right, Comparison<T> comparison)
-        {
-            if (left < right)
+            //// 手动维护一个栈来存储待处理的区间范围
+            //// 对于 2^31 大小的数组，栈深度最大约 31 (Log N)，所以预设容量 64 足够了
+            //var stack = new Stack<(int left, int right)>(64);
+            _tempStack.Clear();
+            _tempStack.Push((0, span.Length - 1));
+
+            while (_tempStack.Count > 0)
             {
+                var (left, right) = _tempStack.Pop();
+
+                // 优化 1：小区间使用插入排序，效率更高
+                if (right - left + 1 < InsertionSortThreshold)
+                {
+                    InsertionSort(span.Slice(left, right - left + 1), comparison);
+                    continue;
+                }
+
+                // 优化 2：执行分区（内部包含三数取中）
                 int pivotIndex = Partition(span, left, right, comparison);
-                QuickSort(span, left, pivotIndex - 1, comparison);
-                QuickSort(span, pivotIndex + 1, right, comparison);
+
+                // 优化 3：先处理较大的区间，将较小的区间推入栈中
+                // 这能确保栈的深度最小（保持在 Log N 级别）
+                int leftSize = pivotIndex - left;
+                int rightSize = right - pivotIndex;
+
+                if (leftSize > rightSize)
+                {
+                    if (leftSize > 1) _tempStack.Push((left, pivotIndex - 1));
+                    if (rightSize > 1) _tempStack.Push((pivotIndex + 1, right));
+                }
+                else
+                {
+                    if (rightSize > 1) _tempStack.Push((pivotIndex + 1, right));
+                    if (leftSize > 1) _tempStack.Push((left, pivotIndex - 1));
+                }
             }
         }
 
         private static int Partition<T>(Span<T> span, int left, int right, Comparison<T> comparison)
         {
-            T pivot = span[right];
-            int i = left - 1;
+            // 优化 4：三数取中，避免最坏情况 O(n^2)
+            int mid = left + (right - left) / 2;
+            SortThree(span, left, mid, right, comparison);
 
-            for (int j = left; j < right; j++)
+            // 将 Pivot 放到 right - 1 的位置（因为 span[right] 已经比 pivot 大了）
+            T pivot = span[mid];
+            Swap(span, mid, right - 1);
+
+            int i = left;
+            int j = right - 1;
+
+            // Hoare 分区方案：比 Lomuto 交换次数更少
+            while (true)
             {
-                if (comparison(span[j], pivot) <= 0)
-                {
-                    i++;
-                    Swap(span, i, j);
-                }
+                while (comparison(span[++i], pivot) < 0) ;
+                while (comparison(span[--j], pivot) > 0) ;
+
+                if (i >= j) break;
+                Swap(span, i, j);
             }
 
-            Swap(span, i + 1, right);
-            return i + 1;
+            // 还原基准值到正确位置
+            Swap(span, i, right - 1);
+            return i;
+        }
+
+        private static void InsertionSort<T>(Span<T> span, Comparison<T> comparison)
+        {
+            for (int i = 1; i < span.Length; i++)
+            {
+                T key = span[i];
+                int j = i - 1;
+                while (j >= 0 && comparison(span[j], key) > 0)
+                {
+                    span[j + 1] = span[j];
+                    j--;
+                }
+                span[j + 1] = key;
+            }
+        }
+
+        private static void SortThree<T>(Span<T> span, int a, int b, int c, Comparison<T> comparison)
+        {
+            if (comparison(span[a], span[b]) > 0) Swap(span, a, b);
+            if (comparison(span[a], span[c]) > 0) Swap(span, a, c);
+            if (comparison(span[b], span[c]) > 0) Swap(span, b, c);
         }
 
         private static void Swap<T>(Span<T> span, int i, int j)
@@ -112,5 +215,6 @@ namespace XDFLib.Extensions
             span[i] = span[j];
             span[j] = temp;
         }
+        #endregion
     }
 }

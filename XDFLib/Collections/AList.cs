@@ -217,6 +217,7 @@ namespace XDFLib.Collections
             }
 
             Array.Copy(items, 0, _array, Count, items.Length);
+            _count = newCount;
         }
 
         public void Clear()
