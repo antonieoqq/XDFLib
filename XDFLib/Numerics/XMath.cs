@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Runtime.CompilerServices;
 
 namespace XDFLib
 {
@@ -181,6 +182,7 @@ namespace XDFLib
         /// 
         /// </summary>
         /// <returns>[min, max]</returns>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static int Clamp(int v, int min, int max)
         {
             return (min < max) ?
@@ -192,6 +194,7 @@ namespace XDFLib
         /// 
         /// </summary>
         /// <returns>[min, max]</returns>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static float Clamp(float v, float min, float max)
         {
             return (min < max) ?
@@ -199,6 +202,7 @@ namespace XDFLib
                 ((v > min) ? min : (v < max) ? max : v);
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static double Clamp(double v, double min, double max)
         {
             return (min < max) ?
@@ -210,6 +214,7 @@ namespace XDFLib
         /// 
         /// </summary>
         /// <returns>[0, 1]</returns>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static float Clamp01(float v)
         {
             return v < 0 ? 0 : v > 1 ? 1 : v;
@@ -219,11 +224,13 @@ namespace XDFLib
         /// 
         /// </summary>
         /// <returns>[0, 1]</returns>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static double Clamp01(double v)
         {
             return v < 0 ? 0 : v > 1 ? 1 : v;
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static int Loop(int v, int count)
         {
             if (count <= 0)
@@ -234,7 +241,16 @@ namespace XDFLib
             return r;
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static float Loop(float v, float count)
+        {
+            var m = v % count;
+            var r = m >= 0 ? m : m + count;
+            return r;
+        }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static double Loop(double v, double count)
         {
             var m = v % count;
             var r = m >= 0 ? m : m + count;
@@ -248,75 +264,37 @@ namespace XDFLib
         /// <param name="start"></param>
         /// <param name="end"></param>
         /// <returns></returns>
-        [Obsolete("Use Loop instead")]
-        public static int LoopOld(int v, int start, int end)
-        {
-            if (start == end) return start;
-
-            if (start > end)
-                Utilities.Swap(ref start, ref end);
-
-            int distance = v - start;
-            int repeatLength = end - start;
-            int firstMod = distance % repeatLength;
-            return firstMod + start + (firstMod < 0 ? repeatLength : 0);
-        }
-
-        [Obsolete("Use Loop instead")]
-        public static float LoopOld(float v, float start, float end)
-        {
-            if (start == end) return start;
-
-            if (start > end)
-                Utilities.Swap(ref start, ref end);
-
-            float distance = v - start;
-            float repeatLength = end - start;
-            float firstMod = distance % repeatLength;
-            return firstMod + start + (firstMod < 0 ? repeatLength : 0);
-        }
-
-        /// <summary>
-        /// 不包含end [ )
-        /// </summary>
-        /// <param name="v"></param>
-        /// <param name="start"></param>
-        /// <param name="end"></param>
-        /// <returns></returns>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static int Loop(int v, int start, int end)
         {
-            if (start == end) return start;
+            var length = end - start;
+            if (length == 0) return start; // 防止除以 0
 
-            if (start < end)
-            {
-                var len = end - start;
-                var loop = Loop(v - start, len);
-                return loop + start;
-            }
-            else
-            {
-                var len = start - end;
-                var loop = Loop(v - end, len);
-                return loop + end;
-            }
+            // 使用数学公式：Result = start + ((v - start) % length + length) % length
+            // 这个公式可以同时处理 v < start 或 v > end 的情况，且不依赖 start 和 end 的大小关系
+            return start + ((v - start) % length + length) % length;
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static float Loop(float v, float start, float end)
         {
-            if (start == end) return start;
+            var length = end - start;
+            if (length == 0) return start; // 防止除以 0
 
-            if (start < end)
-            {
-                var len = end - start;
-                var loop = Loop(v - start, len);
-                return loop + start;
-            }
-            else
-            {
-                var len = start - end;
-                var loop = Loop(v - end, len);
-                return loop + end;
-            }
+            // 使用数学公式：Result = start + ((v - start) % length + length) % length
+            // 这个公式可以同时处理 v < start 或 v > end 的情况，且不依赖 start 和 end 的大小关系
+            return start + ((v - start) % length + length) % length;
+        }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static double Loop(double v, double start, double end)
+        {
+            var length = end - start;
+            if (length == 0) return start; // 防止除以 0
+
+            // 使用数学公式：Result = start + ((v - start) % length + length) % length
+            // 这个公式可以同时处理 v < start 或 v > end 的情况，且不依赖 start 和 end 的大小关系
+            return start + ((v - start) % length + length) % length;
         }
 
         public static bool Compare(int source, int compareTo, ECompMode compMode)

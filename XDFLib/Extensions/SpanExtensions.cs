@@ -73,46 +73,6 @@ namespace XDFLib.Extensions
             }
         }
 
-        //public static void QuickSort<T>(this Span<T> span, Comparison<T> comparison)
-        //{
-        //    QuickSort(span, 0, span.Length - 1, comparison);
-        //}
-
-        //public static void QuickSort<T>(this Span<T> span, int left, int right, Comparison<T> comparison)
-        //{
-        //    if (left < right)
-        //    {
-        //        int pivotIndex = Partition(span, left, right, comparison);
-        //        QuickSort(span, left, pivotIndex - 1, comparison);
-        //        QuickSort(span, pivotIndex + 1, right, comparison);
-        //    }
-        //}
-
-        //private static int Partition<T>(Span<T> span, int left, int right, Comparison<T> comparison)
-        //{
-        //    T pivot = span[right];
-        //    int i = left - 1;
-
-        //    for (int j = left; j < right; j++)
-        //    {
-        //        if (comparison(span[j], pivot) <= 0)
-        //        {
-        //            i++;
-        //            Swap(span, i, j);
-        //        }
-        //    }
-
-        //    Swap(span, i + 1, right);
-        //    return i + 1;
-        //}
-
-        //private static void Swap<T>(Span<T> span, int i, int j)
-        //{
-        //    T temp = span[i];
-        //    span[i] = span[j];
-        //    span[j] = temp;
-        //}
-
         #region Sort
         private const int InsertionSortThreshold = 16;
         private static Stack<(int left, int right)> _tempStack = new Stack<(int left, int right)>(64);
