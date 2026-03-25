@@ -369,7 +369,7 @@ namespace XDFLib.Collections
 
         public int ClampToValidIndex(int index)
         {
-            return XMath.Clamp(index, 0, _count - 1);
+            return Math.Clamp(index, 0, _count - 1);
         }
 
         public void Resize(int newSize)

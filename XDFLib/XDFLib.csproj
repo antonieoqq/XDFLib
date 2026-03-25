@@ -4,12 +4,15 @@
     <TargetFrameworks>net10.0;net9.0;net8.0;netstandard2.1</TargetFrameworks>
     <Authors>Dafeng Xie</Authors>
     <Description>Xie Dafeng's personal C# wheels</Description>
-    <Version>4.8.1</Version>
+    <Version>4.8.2</Version>
     <PackageReleaseNotes>4.8.0
 开发 重新实现 Span.QuickSort，以改进性能
 4.8.1
 开发 XMath.Loop 增加 double 版本
-开发 优化 XMath.Loop(value, start, end) 版本的性能</PackageReleaseNotes>
+开发 优化 XMath.Loop(value, start, end) 版本的性能
+4.8.2
+开发 优化 XMath.Rescale 
+删除 XMath 的 Clamp/Min/Max 系列</PackageReleaseNotes>
     <CopyLocalLockFileAssemblies>true</CopyLocalLockFileAssemblies>
     <PlatformTarget>x64</PlatformTarget>
     <Nullable>enable</Nullable>

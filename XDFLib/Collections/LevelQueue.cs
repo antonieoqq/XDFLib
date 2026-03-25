@@ -36,7 +36,7 @@ namespace XDFLib.Collections
             get { return _totalScore; }
             set
             {
-                var validTotalScore = ClampMaxTotalScore ? XMath.Clamp(value, 0, TopLevelTotalScore) : value;
+                var validTotalScore = ClampMaxTotalScore ? Math.Clamp(value, 0, TopLevelTotalScore) : value;
                 if (_totalScore != validTotalScore)
                 {
                     _totalScore = validTotalScore;
@@ -53,10 +53,10 @@ namespace XDFLib.Collections
         int _levelAchieved = 0;
         public int LevelAchieved
         {
-            get { return XMath.Clamp(_levelAchieved, 0, XMath.Max(0, _levelScores.Count)); }
+            get { return Math.Clamp(_levelAchieved, 0, Math.Max(0, _levelScores.Count)); }
             set
             {
-                var newV = XMath.Clamp(value, 0, XMath.Max(0, _levelScores.Count));
+                var newV = Math.Clamp(value, 0, Math.Max(0, _levelScores.Count));
                 if (_levelAchieved != newV)
                 {
                     _levelAchieved = value;
@@ -100,7 +100,7 @@ namespace XDFLib.Collections
             {
                 var destTopLevel = IsZeroBased ? value : value - 1;
                 var minLevel = BaseLevel;
-                var validTopLevel = XMath.Max(minLevel, destTopLevel);
+                var validTopLevel = Math.Max(minLevel, destTopLevel);
                 _levelScores.Resize(validTopLevel, 1);
                 RefreshLevelTotalScores();
             }
@@ -129,7 +129,7 @@ namespace XDFLib.Collections
 
         public void RemoveLevel(int level)
         {
-            var levelToRemove = XMath.Clamp(level, BaseLevel, TopLevel);
+            var levelToRemove = Math.Clamp(level, BaseLevel, TopLevel);
             var lvIndex = GetLevelIndex(levelToRemove);
             _levelScores.RemoveAt(lvIndex);
             RefreshLevelTotalScores();
@@ -231,7 +231,7 @@ namespace XDFLib.Collections
                     var currLevelTotalScore = _levelTotalScores[i];
                     if (score < currLevelTotalScore)
                     {
-                        return XMath.Max(i - 1, 0);
+                        return Math.Max(i - 1, 0);
                     }
                 }
                 return _levelTotalScores.Count - 1;
@@ -279,7 +279,7 @@ namespace XDFLib.Collections
         // 为防止循环调用，在此函数中直接操作 _currentLevelIndex
         void SetLevelByTotalScore(int score)
         {
-            score = XMath.Max(0, score);
+            score = Math.Max(0, score);
 
             var newL = score >= TopLevelTotalScore ? TopLevelTotalScore : GetLevelAchievedBySocre(score);
 
@@ -293,7 +293,7 @@ namespace XDFLib.Collections
         // 为防止循环调用，在此函数中直接操作 _totalScore
         void SetTotalScoreByLevel(int level)
         {
-            level = XMath.Max(BaseLevel, level);
+            level = Math.Max(BaseLevel, level);
 
             if (level >= TopLevel)
             {

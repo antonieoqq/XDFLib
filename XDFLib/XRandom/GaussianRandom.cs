@@ -39,7 +39,7 @@ namespace XDFLib.XRandom
             {
                 float min = mean - variance;
                 float max = mean + variance;
-                return XMath.Clamp(result, min, max * FloatTorlerenceFactor);
+                return Math.Clamp(result, min, max * FloatTorlerenceFactor);
             }
             return result;
         }
@@ -69,7 +69,7 @@ namespace XDFLib.XRandom
             {
                 float min = mean - variance;
                 float max = mean + variance;
-                return XMath.Clamp(result, min, max * FloatTorlerenceFactor);
+                return Math.Clamp(result, min, max * FloatTorlerenceFactor);
             }
             return result;
         }
@@ -93,7 +93,7 @@ namespace XDFLib.XRandom
             {
                 float min = mean - variance;
                 float max = mean + variance;
-                return XMath.Clamp(result, min, max * FloatTorlerenceFactor);
+                return Math.Clamp(result, min, max * FloatTorlerenceFactor);
             }
             return result;
         }
@@ -127,7 +127,7 @@ namespace XDFLib.XRandom
             {
                 float min = mean - variance;
                 float max = mean + variance;
-                return XMath.Clamp(result, min, max * FloatTorlerenceFactor);
+                return Math.Clamp(result, min, max * FloatTorlerenceFactor);
             }
             return result;
         }
@@ -188,7 +188,7 @@ namespace XDFLib.XRandom
             {
                 double min = mean - variance;
                 double max = mean + variance;
-                return XMath.Clamp(result, min, max * DoubleTorlerenceFactor);
+                return Math.Clamp(result, min, max * DoubleTorlerenceFactor);
             }
             return result;
         }
@@ -210,7 +210,7 @@ namespace XDFLib.XRandom
             {
                 double min = mean - variance;
                 double max = mean + variance;
-                return XMath.Clamp(result, min, max * DoubleTorlerenceFactor);
+                return Math.Clamp(result, min, max * DoubleTorlerenceFactor);
             }
             return result;
         }
@@ -234,7 +234,7 @@ namespace XDFLib.XRandom
             {
                 double min = mean - variance;
                 double max = mean + variance;
-                return XMath.Clamp(result, min, max * DoubleTorlerenceFactor);
+                return Math.Clamp(result, min, max * DoubleTorlerenceFactor);
             }
             return result;
         }
@@ -286,7 +286,7 @@ namespace XDFLib.XRandom
             {
                 double min = mean - variance;
                 double max = mean + variance;
-                return XMath.Clamp(result, min, max * DoubleTorlerenceFactor);
+                return Math.Clamp(result, min, max * DoubleTorlerenceFactor);
             }
             return result;
         }

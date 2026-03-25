@@ -43,13 +43,13 @@ namespace XDFLib.Collections
         public float GetValueAtX(float x)
         {
             var percent = (x - StartX) / (EndX - StartX);
-            var t = XMath.Clamp(percent, 0, 1);
+            var t = Math.Clamp(percent, 0, 1);
             return GetValueAtT(t);
         }
 
         public float GetValueAtPercent(float percent)
         {
-            var t = XMath.Clamp(percent, 0, 1);
+            var t = Math.Clamp(percent, 0, 1);
             return GetValueAtT(t);
         }
 

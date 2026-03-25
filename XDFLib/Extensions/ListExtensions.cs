@@ -83,7 +83,7 @@ namespace XDFLib.Extensions
             {
                 return;
             }
-            var validMove = XMath.Clamp(move, -originIndex, list.Count - 1 - originIndex);
+            var validMove = Math.Clamp(move, -originIndex, list.Count - 1 - originIndex);
 
             var destIndex = originIndex + validMove;
             if (destIndex >= 0 && destIndex < list.Count)

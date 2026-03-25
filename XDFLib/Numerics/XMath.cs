@@ -116,126 +116,65 @@ namespace XDFLib
 
         public static float Rescale(float value, float start, float end, float newStart, float newEnd, bool isClamp = false)
         {
-            if (start == end || value == start)
+            if (start == end || newStart == newEnd)
                 return newStart;
-            else if (value == end)
-                return newEnd;
-            else
+
+            // 1. 计算归一化进度 (0 到 1 之间的比例)
+            // 即使 start == end，这里也会产生 NaN 或 Infinity，由后面的逻辑处理
+            float t = (value - start) / (end - start);
+
+            // 2. 线性插值计算
+            float result = newStart + t * (newEnd - newStart);
+
+            // 3. 处理 Clamp 逻辑
+            if (isClamp)
             {
-                float result = newStart + (((value - start) / (end - start)) * (newEnd - newStart));
-                if (isClamp)
-                    if (newStart < newEnd)
-                    {
-                        result = Clamp(result, newStart, newEnd);
-                    }
-                    else
-                    {
-                        result = Clamp(result, newEnd, newStart);
-                    }
-                return result;
+                // 自动识别新区间的前后顺序，无需额外的 if (newStart < newEnd)
+                float min = MathF.Min(newStart, newEnd);
+                float max = MathF.Max(newStart, newEnd);
+
+                // 使用内置的 Clamp，JIT 会将其优化为 CPU 指令 (如 SSE 的 MINSS/MAXSS)
+                return Math.Clamp(result, min, max);
             }
+
+            // 4. 处理 start == end 的极端情况（防止返回 NaN）
+            if (float.IsNaN(result)) return newStart;
+
+            return result;
         }
 
         public static double Rescale(double value, double start, double end, double newStart, double newEnd, bool isClamp = false)
         {
-            if (start == end || value == start)
+            if (start == end || newStart == newEnd)
                 return newStart;
-            else if (value == end)
-                return newEnd;
-            else
+
+            // 1. 计算归一化进度 (0 到 1 之间的比例)
+            // 即使 start == end，这里也会产生 NaN 或 Infinity，由后面的逻辑处理
+            double t = (value - start) / (end - start);
+
+            // 2. 线性插值计算
+            double result = newStart + t * (newEnd - newStart);
+
+            // 3. 处理 Clamp 逻辑
+            if (isClamp)
             {
-                double result = newStart + (((value - start) / (end - start)) * (newEnd - newStart));
-                if (isClamp)
-                    if (newStart < newEnd)
-                    {
-                        result = Clamp(result, newStart, newEnd);
-                    }
-                    else
-                    {
-                        result = Clamp(result, newEnd, newStart);
-                    }
-                return result;
+                // 自动识别新区间的前后顺序，无需额外的 if (newStart < newEnd)
+                double min = Math.Min(newStart, newEnd);
+                double max = Math.Max(newStart, newEnd);
+
+                // 使用内置的 Clamp，JIT 会将其优化为 CPU 指令 (如 SSE 的 MINSS/MAXSS)
+                return Math.Clamp(result, min, max);
             }
-        }
 
-        public static int Max(int a, int b)
-        {
-            return a > b ? a : b;
-        }
+            // 4. 处理 start == end 的极端情况（防止返回 NaN）
+            if (double.IsNaN(result)) return newStart;
 
-        public static float Max(float a, float b)
-        {
-            return a > b ? a : b;
-        }
-
-        public static int Min(int a, int b)
-        {
-            return a < b ? a : b;
-        }
-
-        public static float Min(float a, float b)
-        {
-            return a < b ? a : b;
-        }
-
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <returns>[min, max]</returns>
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static int Clamp(int v, int min, int max)
-        {
-            return (min < max) ?
-                ((v < min) ? min : (v > max) ? max : v) :
-                ((v > min) ? min : (v < max) ? max : v);
-        }
-
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <returns>[min, max]</returns>
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static float Clamp(float v, float min, float max)
-        {
-            return (min < max) ?
-                ((v < min) ? min : (v > max) ? max : v) :
-                ((v > min) ? min : (v < max) ? max : v);
-        }
-
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static double Clamp(double v, double min, double max)
-        {
-            return (min < max) ?
-                ((v < min) ? min : (v > max) ? max : v) :
-                ((v > min) ? min : (v < max) ? max : v);
-        }
-
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <returns>[0, 1]</returns>
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static float Clamp01(float v)
-        {
-            return v < 0 ? 0 : v > 1 ? 1 : v;
-        }
-
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <returns>[0, 1]</returns>
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static double Clamp01(double v)
-        {
-            return v < 0 ? 0 : v > 1 ? 1 : v;
+            return result;
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static int Loop(int v, int count)
         {
-            if (count <= 0)
-                throw new ArgumentOutOfRangeException(nameof(count), "Count must be positive.");
-
             var m = v % count;
             var r = m >= 0 ? m : m + count;
             return r;
