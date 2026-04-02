@@ -57,16 +57,19 @@ namespace XDFLib.Collections
             _topWeight = 0;
         }
 
-        public bool AddWeight(T obj, float weight)
+        public void AddWeight(T obj, float weight)
         {
-            if (obj == null) return false;
+            if (obj == null) return;
+
+            if (_weightDict.TryGetValue(obj, out var currWeight))
+            {
+                SetWeight(obj, currWeight + weight);
+                return;
+            }
 
             weight = MathF.Max(MinWeight, weight);
-            var added = _weightDict.TryAdd(obj, weight);
-            if (!added) { return false; }
-
-            CreateAndAddNewWeightItem(obj, weight, ref _topWeight);
-            return true;
+            _weightDict.Add(obj, weight);
+            AddToWeightChain(obj, weight, ref _topWeight);
         }
 
         public void RemoveWeight(T obj)
@@ -118,7 +121,7 @@ namespace XDFLib.Collections
                 if (weight <= 0)
                     continue;
 
-                CreateAndAddNewWeightItem(iter.Current.Key, weight, ref _topWeight);
+                AddToWeightChain(iter.Current.Key, weight, ref _topWeight);
             }
             _needRebuildChain = false;
         }
@@ -146,7 +149,7 @@ namespace XDFLib.Collections
             }
         }
 
-        void CreateAndAddNewWeightItem(T obj, float weight, ref float topWeight)
+        void AddToWeightChain(T obj, float weight, ref float topWeight)
         {
             topWeight += weight;
             Entry item = new Entry()
