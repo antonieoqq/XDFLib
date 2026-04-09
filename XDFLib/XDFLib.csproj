@@ -4,19 +4,10 @@
     <TargetFrameworks>net10.0;net9.0;net8.0;netstandard2.1</TargetFrameworks>
     <Authors>Dafeng Xie</Authors>
     <Description>Xie Dafeng's personal C# wheels</Description>
-    <Version>4.8.4</Version>
-    <PackageReleaseNotes>4.8.0
-开发 重新实现 Span.QuickSort，以改进性能
-4.8.1
-开发 XMath.Loop 增加 double 版本
-开发 优化 XMath.Loop(value, start, end) 版本的性能
-4.8.2
-开发 优化 XMath.Rescale 
-删除 XMath 的 Clamp/Min/Max 系列
-4.8.3
-开发 AList.CreateFrom()，用于快速过滤 null并创建AList
-4.8.4
-开发 WeightPool.AddWeight() 现在支持对已经添加的对象继续累加权重</PackageReleaseNotes>
+    <Version>4.9.0</Version>
+    <PackageReleaseNotes>4.9.0
+Compressor 的所有压缩方法都增加同步版本
+Span GetRandomElement 增加普通 Span 版本</PackageReleaseNotes>
     <CopyLocalLockFileAssemblies>true</CopyLocalLockFileAssemblies>
     <PlatformTarget>x64</PlatformTarget>
     <Nullable>enable</Nullable>

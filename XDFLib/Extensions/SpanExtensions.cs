@@ -6,6 +6,14 @@ namespace XDFLib.Extensions
 {
     public static class SpanExtensions
     {
+        public static T GetRandomElement<T>(this Span<T> roSpan)
+        {
+            if (roSpan.Length == 0) { return default; }
+
+            var currIndex = SplitMix32.Random(0, roSpan.Length);
+            return roSpan[currIndex];
+        }
+
         public static T GetRandomElement<T>(this ReadOnlySpan<T> roSpan)
         {
             if (roSpan.Length == 0) { return default; }
@@ -13,6 +21,15 @@ namespace XDFLib.Extensions
             var currIndex = SplitMix32.Random(0, roSpan.Length);
             return roSpan[currIndex];
         }
+
+        public static T GetRandomElement<T>(this Span<T> roSpan, ref int seed)
+        {
+            if (roSpan.Length == 0) { return default; }
+
+            var currIndex = SplitMix32.Random(ref seed, 0, roSpan.Length);
+            return roSpan[currIndex];
+        }
+
 
         public static T GetRandomElement<T>(this ReadOnlySpan<T> roSpan, ref int seed)
         {

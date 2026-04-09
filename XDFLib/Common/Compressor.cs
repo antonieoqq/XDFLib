@@ -59,6 +59,37 @@ namespace XDFLib
         }
 
         /// <summary>
+        /// 同步压缩
+        /// </summary>
+        public static void Zip(Stream inputStream, Stream outputStream, CompressionLevel compLv = CompressionLevel.Optimal,
+            IProgress<long> progress = null)
+        {
+            long originalLength = inputStream.CanSeek ? inputStream.Length : -1;
+            Span<byte> header = stackalloc byte[8];
+            BinaryPrimitives.WriteInt64LittleEndian(header, originalLength);
+            outputStream.Write(header);
+
+            using var gs = new BrotliStream(outputStream, compLv, leaveOpen: true);
+            byte[] buffer = ArrayPool<byte>.Shared.Rent(DefaultBufferSize);
+            long totalRead = 0;
+            try
+            {
+                int bytesRead;
+                while ((bytesRead = inputStream.Read(buffer, 0, buffer.Length)) > 0)
+                {
+                    gs.Write(buffer, 0, bytesRead);
+                    totalRead += bytesRead;
+                    progress?.Report(totalRead);
+                }
+                gs.Flush();
+            }
+            finally
+            {
+                ArrayPool<byte>.Shared.Return(buffer);
+            }
+        }
+
+        /// <summary>
         /// 高性能异步解压。
         /// </summary>
         public static async Task UnzipAsync(Stream compressedStream, Stream outputStream,
@@ -96,6 +127,38 @@ namespace XDFLib
             }
         }
 
+        /// <summary>
+        /// 同步解压
+        /// </summary>
+        public static void Unzip(Stream compressedStream, Stream outputStream, IProgress<long> progress = null)
+        {
+            Span<byte> header = stackalloc byte[8];
+            int readHeader = 0;
+            while (readHeader < 8)
+            {
+                int r = compressedStream.Read(header.Slice(readHeader, 8 - readHeader));
+                if (r <= 0) throw new InvalidDataException("Header truncated");
+                readHeader += r;
+            }
+
+            using var gs = new BrotliStream(compressedStream, CompressionMode.Decompress, leaveOpen: true);
+            byte[] buffer = ArrayPool<byte>.Shared.Rent(DefaultBufferSize);
+            long totalWritten = 0;
+            try
+            {
+                int bytesRead;
+                while ((bytesRead = gs.Read(buffer, 0, buffer.Length)) > 0)
+                {
+                    outputStream.Write(buffer, 0, bytesRead);
+                    totalWritten += bytesRead;
+                    progress?.Report(totalWritten);
+                }
+            }
+            finally
+            {
+                ArrayPool<byte>.Shared.Return(buffer);
+            }
+        }
         #endregion
 
         #region 2. Byte[] 版本 (处理 2GB 以内的内存块)
@@ -106,19 +169,32 @@ namespace XDFLib
         public static async Task<byte[]> ZipAsync(byte[] bytes, CompressionLevel compLv = CompressionLevel.Optimal, CancellationToken ct = default)
         {
             if (bytes == null || bytes.Length == 0) return Array.Empty<byte>();
+            using var mso = new MemoryStream();
+            await ZipAsync(new MemoryStream(bytes), mso, compLv, null, ct);
+            return mso.ToArray();
 
-            using (var mso = new MemoryStream())
-            {
-                byte[] header = new byte[8];
-                BinaryPrimitives.WriteInt64LittleEndian(header, bytes.LongLength);
-                await mso.WriteAsync(header.AsMemory(), ct);
+            //if (bytes == null || bytes.Length == 0) return Array.Empty<byte>();
 
-                using (var gs = new BrotliStream(mso, compLv, leaveOpen: true))
-                {
-                    await gs.WriteAsync(bytes.AsMemory(), ct);
-                }
-                return mso.ToArray();
-            }
+            //using (var mso = new MemoryStream())
+            //{
+            //    byte[] header = new byte[8];
+            //    BinaryPrimitives.WriteInt64LittleEndian(header, bytes.LongLength);
+            //    await mso.WriteAsync(header.AsMemory(), ct);
+
+            //    using (var gs = new BrotliStream(mso, compLv, leaveOpen: true))
+            //    {
+            //        await gs.WriteAsync(bytes.AsMemory(), ct);
+            //    }
+            //    return mso.ToArray();
+            //}
+        }
+
+        public static byte[] Zip(byte[] bytes, CompressionLevel compLv = CompressionLevel.Optimal)
+        {
+            if (bytes == null || bytes.Length == 0) return Array.Empty<byte>();
+            using var mso = new MemoryStream();
+            Zip(new MemoryStream(bytes), mso, compLv, null);
+            return mso.ToArray();
         }
 
         /// <summary>
@@ -167,6 +243,33 @@ namespace XDFLib
                 return mso.ToArray();
             }
         }
+
+        public static byte[] Unzip(byte[] compressedBytes)
+        {
+            if (compressedBytes == null || compressedBytes.Length < 8) return Array.Empty<byte>();
+            long originalSize = BinaryPrimitives.ReadInt64LittleEndian(compressedBytes.AsSpan(0, 8));
+
+            if (originalSize > 0 && originalSize < MaxArrayLength)
+            {
+                byte[] result = new byte[originalSize];
+                using var msi = new MemoryStream(compressedBytes, 8, compressedBytes.Length - 8);
+                using var gs = new BrotliStream(msi, CompressionMode.Decompress);
+
+                int totalRead = 0;
+                while (totalRead < originalSize)
+                {
+                    int read = gs.Read(result, totalRead, (int)originalSize - totalRead);
+                    if (read <= 0) break;
+                    totalRead += read;
+                }
+                return totalRead == originalSize ? result : result[..totalRead];
+            }
+
+            using var msiFallback = new MemoryStream(compressedBytes);
+            using var msoFallback = new MemoryStream();
+            Unzip(msiFallback, msoFallback, null);
+            return msoFallback.ToArray();
+        }
         #endregion
 
         #region 3. string <=> Byte[] 版本 (依然有 2GB 以内的限制)
@@ -179,12 +282,23 @@ namespace XDFLib
             return await ZipAsync(bytes, compLv, ct);
         }
 
+        public static byte[] ZipFromString(string text, CompressionLevel compLv = CompressionLevel.Optimal)
+        {
+            return string.IsNullOrEmpty(text) ? Array.Empty<byte>() : Zip(Encoding.UTF8.GetBytes(text), compLv);
+        }
+
         public static async Task<string> UnzipToStringAsync(byte[] compressedBytes, CancellationToken ct = default)
         {
             var bytes = await UnzipAsync(compressedBytes, ct);
             if (bytes.Length == 0) { return string.Empty; }
 
             return Encoding.UTF8.GetString(bytes);
+        }
+
+        public static string UnzipToString(byte[] compressedBytes)
+        {
+            var bytes = Unzip(compressedBytes);
+            return bytes.Length == 0 ? string.Empty : Encoding.UTF8.GetString(bytes);
         }
         #endregion
     }
