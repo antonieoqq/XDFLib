@@ -4,10 +4,12 @@
     <TargetFrameworks>net10.0;net9.0;net8.0;netstandard2.1</TargetFrameworks>
     <Authors>Dafeng Xie</Authors>
     <Description>Xie Dafeng's personal C# wheels</Description>
-    <Version>4.9.0</Version>
+    <Version>4.9.1</Version>
     <PackageReleaseNotes>4.9.0
 Compressor 的所有压缩方法都增加同步版本
-Span GetRandomElement 增加普通 Span 版本</PackageReleaseNotes>
+Span GetRandomElement 增加普通 Span 版本
+4.9.1
+AList.CreateFrom 增加 ICollection&lt;T&gt; 版本的重载</PackageReleaseNotes>
     <CopyLocalLockFileAssemblies>true</CopyLocalLockFileAssemblies>
     <PlatformTarget>x64</PlatformTarget>
     <Nullable>enable</Nullable>
